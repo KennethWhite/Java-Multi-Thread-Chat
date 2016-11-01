@@ -8,7 +8,7 @@
 
 import java.io.*;
 import java.util.*;
-
+//This line was very necessary
 public class LinkedList<E> implements List<E> , Serializable , Cloneable{
     private class Node<E>{
         private Node<E> next;
