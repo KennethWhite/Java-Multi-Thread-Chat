@@ -1,8 +1,7 @@
 
 /**
  * Created by Casey White on 6/21/2016.
- * Program has generics implemented for extra credit
- * Tony said not to worry about the unchecked cast in the equals method
+ * i am syncing with the client
  */
 //
 
