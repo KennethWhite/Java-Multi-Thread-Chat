@@ -423,4 +423,4 @@ public class LinkedList<E> implements List<E> , Serializable , Cloneable{
             throw new UnsupportedOperationException();
         }
     }
-}
+}//end class
