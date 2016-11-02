@@ -20,6 +20,7 @@ public class Client {
         System.out.println("Data from server received");
         JOptionPane.showMessageDialog(null, ans);           //shows the imput recieved from server fsdfssadad
         //asda
+        //flidsagfasuhkdfg
         s.close();
         System.exit(0);
     }
