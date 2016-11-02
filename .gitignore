@@ -1,0 +1,5 @@
+Chat-Client/.idea/compiler.xml
+*.xml
+*.iml
+Chat-Client/out/production/Chat-Client/client/Client.class
+Chat-Server/out/production/Chat-Server/server/Server.class
