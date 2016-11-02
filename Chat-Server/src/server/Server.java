@@ -1,9 +1,5 @@
 package server;
 
-/**
- * Created by CW-Aspire on 11/1/2016. // Test for github
- */
-
 //imports
 import java.io.*;
 import java.net.*;
@@ -29,7 +25,7 @@ public class Server {
         }
 
         finally {
-            listener.close();       //make sure to always close sockets after usegg
+            listener.close();       //make sure to always close sockets after use
             System.out.println("Server Closed");
         }
     }
