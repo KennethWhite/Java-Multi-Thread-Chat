@@ -18,7 +18,7 @@ public class Client {
         BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));       //creates a buffered reader for input from server
         String ans = input.readLine();                      //gets input
         System.out.println("Data from server received");
-        JOptionPane.showMessageDialog(null, ans);           //shows the imput recieved from server
+        JOptionPane.showMessageDialog(null, ans);           //shows the imput recieved from server fsdfs
         s.close();
         System.exit(0);
     }
