@@ -1,7 +1,7 @@
 package server;
 
 /**
- * Created by CW-Aspire on 11/1/2016.
+ * Created by CW-Aspire on 11/1/2016. // Test for github
  */
 
 //imports
@@ -27,9 +27,6 @@ public class Server {
                 }//End while loop
             }
         }
-
-//yafda
-
 
         finally {
             listener.close();       //make sure to always close sockets after usegg
