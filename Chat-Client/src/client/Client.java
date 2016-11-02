@@ -1,9 +1,4 @@
 package client;
-
-/**
- * Created by CW-Aspire on 11/1/2016.
- */
-
 //imports
 import java.io.*;
 import java.net.*;
@@ -18,9 +13,7 @@ public class Client {
         BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));       //creates a buffered reader for input from server
         String ans = input.readLine();                      //gets input
         System.out.println("Data from server received");
-        JOptionPane.showMessageDialog(null, ans);           //shows the imput recieved from server fsdfssadad
-        //asda
-        //flidsagfasuhkdfg
+        JOptionPane.showMessageDialog(null, ans);           //shows the imput recieved from server0
         s.close();
         System.exit(0);
     }
