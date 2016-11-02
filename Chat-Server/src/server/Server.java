@@ -18,15 +18,19 @@ public class Server {
                 Socket socket = listener.accept();  //accept() waits until a client connects to the server on the given port.
                 System.out.println("Connection Success");
                 try{
-                    PrintWriter out = new PrintWriter(socket.getOutputStream(), true);  //this is the output to the client from the erver
+                    PrintWriter out = new PrintWriter(socket.getOutputStream(), true);  //this is the output to the client from the server
                     out.println("the current date is : " + new Date().toString());
                 }
                 finally {
                     socket.close(); //make sure to always close sockets after use
                     System.out.println("Connection Closed");
-                }//lloyyy
+                }//End while loop
             }
         }
+
+
+
+
         finally {
             listener.close();       //make sure to always close sockets after usegg
             System.out.println("Server Closed");
