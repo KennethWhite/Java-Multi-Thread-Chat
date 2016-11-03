@@ -20,8 +20,8 @@ public class Server {
                 finally {
                     socket.close(); //make sure to always close sockets after use
                     System.out.println("Connection Closed");
-                }//End while loop
-            }
+                }
+            }//end while-loop
         }
 
         finally {
