@@ -96,12 +96,12 @@ public class Server {
                     else if(shouldParse(input)){
                         input = parse(input);
                     }
-
-                        for (PrintWriter writer : writers) {//Iterates through all the printwriters
-                            writer.println("MESSAGE " + name + ": " + input);//each client is sent the message
-                            System.out.println(name + ": " + input);
+                        if(input != null && !input.equals("")) {
+                            for (PrintWriter writer : writers) {//Iterates through all the printwriters
+                                writer.println("MESSAGE " + name + ": " + input);//each client is sent the message
+                                System.out.println(name + ": " + input);
+                            }
                         }
-
                 }
             } catch (IOException e) {
                 System.out.println(e);
@@ -138,8 +138,8 @@ public class Server {
 
                 case "/date":
                     Date date = new Date();
-                    this.out.println(date.toString());
-                    break;
+                    out.println(date.toString());
+                    return "";
 
                 case "/flip":
                     var1 = (int)Math.random();
