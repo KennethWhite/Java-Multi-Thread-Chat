@@ -23,11 +23,11 @@ package client;
  //prompts user for ip address and port then attempts to connect
   public class Client {
      //obj vars
-     BufferedReader in;
-     PrintWriter out;
-     JFrame frame = new JFrame("KDC chat");
-     JTextField textField = new JTextField(40);
-     JTextArea messageArea = new JTextArea(8, 40);
+     private BufferedReader in;
+     private PrintWriter out;
+     private JFrame frame = new JFrame("KDC chat");
+     private JTextField textField = new JTextField(40);
+     private JTextArea messageArea = new JTextArea(8, 40);
   
      //initializes the client class
      public static void main(String[] args) throws Exception {
@@ -40,11 +40,11 @@ package client;
 
 
 //the object Client.java
-     public Client() {
+     private Client() {
  
          // Layout GUI
-         textField.setEditable(false);                                              //denies use of input bix until name is verified
-         messageArea.setEditable(false);                                            //wont display messeages till ^^
+         textField.setEditable(false);                                              //denies use of input box until name is verified
+         messageArea.setEditable(false);                                            //wont display messages till ^^
          frame.getContentPane().add(textField, "North");                            //adds input box to top of the frame
          frame.getContentPane().add(new JScrollPane(messageArea), "Center");        //adds input box to center of the frame
          frame.pack();                                                              //ensures the content fits in the frame
@@ -89,6 +89,7 @@ package client;
              } else if (line.startsWith("MESSAGE")) {
                  messageArea.append(line.substring(8) + "\n");
              }
+
          }
      }
  
