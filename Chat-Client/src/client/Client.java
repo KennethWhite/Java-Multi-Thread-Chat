@@ -17,7 +17,6 @@ package client;
             or  "./tic other-user" start tic tac toe with them. the server could then read that special key prompt other client.
             once accepted the server sends data to this client in the "Listening loop" and starts the game. this could be used to do a shit load of stuff.
 
-
      */
   
  //prompts user for ip address and port then attempts to connect
