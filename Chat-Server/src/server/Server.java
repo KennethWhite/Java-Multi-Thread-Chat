@@ -95,17 +95,13 @@ public class Server {
                     }
                     else if(shouldParse(input)){
                         input = parse(input);
+                    }
+
                         for (PrintWriter writer : writers) {//Iterates through all the printwriters
                             writer.println("MESSAGE " + name + ": " + input);//each client is sent the message
                             System.out.println(name + ": " + input);
                         }
-                    }
-                    else{
-                        for (PrintWriter writer : writers) {//Iterates through all the printwriters
-                            writer.println("MESSAGE " + name + ": " + input);//each client is sent the message
-                            System.out.println(name + ": " + input);
-                        }
-                    }
+
                 }
             } catch (IOException e) {
                 System.out.println(e);
@@ -126,14 +122,14 @@ public class Server {
         }//end run
 
         private static boolean shouldParse(String s){
-            if(s.substring(0,1).equals("/")){
+            if(!s.isEmpty() && s.substring(0,1).equals("/")){
                 return true;
             }
             return false;
         }
 
         //Method will be used to perform user commands
-        private static String parse(String s){
+        private String parse(String s){
             String temp = s.toLowerCase();
             int var1;
 
@@ -142,8 +138,8 @@ public class Server {
 
                 case "/date":
                     Date date = new Date();
-                    return date.toString();
-
+                    this.out.println(date.toString());
+                    break;
 
                 case "/flip":
                     var1 = (int)Math.random();
@@ -173,8 +169,8 @@ public class Server {
 
 
             }//end switch
-            return "Command not recognized: " + temp;
-
+            out.println("Command not recognized: " + temp);
+            return null;
 
         }
     }//end Handler
