@@ -139,7 +139,7 @@ public class Server {
                 case "/date":
                     Date date = new Date();
                     this.out.println(date.toString());
-
+                    break;
 
                 case "/flip":
                     var1 = (int)Math.random();
@@ -169,8 +169,8 @@ public class Server {
 
 
             }//end switch
-            return "Command not recognized: " + temp;
-
+            out.println("Command not recognized: " + temp);
+            return null;
 
         }
     }//end Handler
