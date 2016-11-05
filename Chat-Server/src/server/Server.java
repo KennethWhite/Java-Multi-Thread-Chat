@@ -126,7 +126,7 @@ public class Server {
         }//end run
 
         private static boolean shouldParse(String s){
-            if(s.substring(0,1).equals("/")){
+            if(!s.isEmpty() && s.substring(0,1).equals("/")){
                 return true;
             }
             return false;
