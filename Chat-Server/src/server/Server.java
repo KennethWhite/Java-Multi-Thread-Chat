@@ -1,9 +1,5 @@
 package server;
-//make a change
-/**
- * Created by CW-Aspire on 11/1/2016.
- * Design is from: http://cs.lmu.edu/~ray/notes/javanetexamples/#chat
- */
+
 
 //imports
 import java.io.*;
@@ -12,14 +8,14 @@ import java.util.*;
 
 
 /**
- * Because this is just a teaching example to illustrate a simple
- * chat server, there are a few features that have been left out.
- * Two are very useful and belong in production code:
- *
- *     1. The protocol should be enhanced so that the client can
- *        send clean disconnect messages to the server.
- *
- *     2. The server should do some logging.
+
+    //things to do
+        1. ensure proper disconnect with client at disconnect
+        2. The server should do some logging, connection times, names. we could save it to a file.
+        3. Implement special character for data communication and server commands
+        4. make server gui, settings, logs. we could read them into a "ScrollPane" so you could read it right there.
+
+
  */
 
 //Multithread chat room server
@@ -69,8 +65,7 @@ public class Server {
             try {
 
                 // Create character streams for the socket.
-                in = new BufferedReader(new InputStreamReader(
-                        socket.getInputStream()));
+                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out = new PrintWriter(socket.getOutputStream(), true);
 
                 while (true) {
@@ -98,9 +93,18 @@ public class Server {
                     if (input == null) {
                         return;
                     }
-                    for (PrintWriter writer : writers) {//Iterates through all the printwriters
-                        writer.println("MESSAGE " + name + ": " + input);//each client is sent the message
-                        System.out.println(name + ": " + input);
+                    else if(shouldParse(input)){
+                        input = parse(input);
+                        for (PrintWriter writer : writers) {//Iterates through all the printwriters
+                            writer.println("MESSAGE " + name + ": " + input);//each client is sent the message
+                            System.out.println(name + ": " + input);
+                        }
+                    }
+                    else{
+                        for (PrintWriter writer : writers) {//Iterates through all the printwriters
+                            writer.println("MESSAGE " + name + ": " + input);//each client is sent the message
+                            System.out.println(name + ": " + input);
+                        }
                     }
                 }
             } catch (IOException e) {
@@ -118,7 +122,60 @@ public class Server {
                     socket.close();
                 } catch (IOException e) {
                 }
+            }// end finally
+        }//end run
+
+        private static boolean shouldParse(String s){
+            if(s.substring(0,1).equals("/")){
+                return true;
             }
+            return false;
         }
-    }
-}
+
+        //Method will be used to perform user commands
+        private static String parse(String s){
+            String temp = s.toLowerCase();
+            int var1;
+
+            //To add a command simply add 'case "command":'
+            switch(temp){
+
+                case "/date":
+                    Date date = new Date();
+                    return date.toString();
+
+
+                case "/flip":
+                    var1 = (int)Math.random();
+                    if(var1 % 2 == 0){
+                        return "Flipping a coin: Heads.";
+                    }
+                    else{
+                        return "Flipping a coin: Tails.";
+                    }
+
+
+                case "/roll":
+                    var1 = (int)(Math.random() * 100);
+                    return "Rolling (0-99): " + var1 + ".";
+
+
+                case "/rolldice":
+                    var1 = ((int)(Math.random() * 10) +2);
+                    if(var1 == 2){
+                        return "Rolling two dice: Roll is " + var1 + ", snake eyes!";
+                    }
+                    else if(var1 == 12){
+                        return "Rolling two dice: Roll is " + var1 + ", lucky!";
+                    }
+                    return "Rolling two dice: Roll is " + var1 + ".";
+
+
+
+            }//end switch
+            return "Command not recognized: " + temp;
+
+
+        }
+    }//end Handler
+}//end class
