@@ -93,9 +93,18 @@ public class Server {
                     if (input == null) {
                         return;
                     }
-                    for (PrintWriter writer : writers) {//Iterates through all the printwriters
-                        writer.println("MESSAGE " + name + ": " + input);//each client is sent the message
-                        System.out.println(name + ": " + input);
+                    else if(shouldParse(input)){
+                        input = parse(input);
+                        for (PrintWriter writer : writers) {//Iterates through all the printwriters
+                            writer.println("MESSAGE " + name + ": " + input);//each client is sent the message
+                            System.out.println(name + ": " + input);
+                        }
+                    }
+                    else{
+                        for (PrintWriter writer : writers) {//Iterates through all the printwriters
+                            writer.println("MESSAGE " + name + ": " + input);//each client is sent the message
+                            System.out.println(name + ": " + input);
+                        }
                     }
                 }
             } catch (IOException e) {
@@ -113,7 +122,60 @@ public class Server {
                     socket.close();
                 } catch (IOException e) {
                 }
+            }// end finally
+        }//end run
+
+        private static boolean shouldParse(String s){
+            if(s.substring(0,1).equals("/")){
+                return true;
             }
+            return false;
         }
-    }
-}
+
+        //Method will be used to perform user commands
+        private static String parse(String s){
+            String temp = s.toLowerCase();
+            int var1;
+
+            //To add a command simply add 'case "command":'
+            switch(temp){
+
+                case "/date":
+                    Date date = new Date();
+                    return date.toString();
+
+
+                case "/flip":
+                    var1 = (int)Math.random();
+                    if(var1 % 2 == 0){
+                        return "Flipping a coin: Heads.";
+                    }
+                    else{
+                        return "Flipping a coin: Tails.";
+                    }
+
+
+                case "/roll":
+                    var1 = (int)(Math.random() * 100);
+                    return "Rolling (0-99): " + var1 + ".";
+
+
+                case "/rolldice":
+                    var1 = ((int)(Math.random() * 10) +2);
+                    if(var1 == 2){
+                        return "Rolling two dice: Roll is " + var1 + ", snake eyes!";
+                    }
+                    else if(var1 == 12){
+                        return "Rolling two dice: Roll is " + var1 + ", lucky!";
+                    }
+                    return "Rolling two dice: Roll is " + var1 + ".";
+
+
+
+            }//end switch
+            return "Command not recognized: " + temp;
+
+
+        }
+    }//end Handler
+}//end class
