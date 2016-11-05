@@ -1,9 +1,5 @@
 package server;
-//make a change
-/**
- * Created by CW-Aspire on 11/1/2016.
- * Design is from: http://cs.lmu.edu/~ray/notes/javanetexamples/#chat
- */
+
 
 //imports
 import java.io.*;
@@ -12,14 +8,14 @@ import java.util.*;
 
 
 /**
- * Because this is just a teaching example to illustrate a simple
- * chat server, there are a few features that have been left out.
- * Two are very useful and belong in production code:
- *
- *     1. The protocol should be enhanced so that the client can
- *        send clean disconnect messages to the server.
- *
- *     2. The server should do some logging.
+
+    //things to do
+        1. ensure proper disconnect with client at disconnect
+        2. The server should do some logging, connection times, names. we could save it to a file.
+        3. Implement special character for data communication and server commands
+        4. make server gui, settings, logs. we could read them into a "ScrollPane" so you could read it right there.
+
+
  */
 
 //Multithread chat room server
@@ -69,8 +65,7 @@ public class Server {
             try {
 
                 // Create character streams for the socket.
-                in = new BufferedReader(new InputStreamReader(
-                        socket.getInputStream()));
+                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out = new PrintWriter(socket.getOutputStream(), true);
 
                 while (true) {
