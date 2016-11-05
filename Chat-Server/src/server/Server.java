@@ -100,6 +100,7 @@ public class Server {
                     }
                     for (PrintWriter writer : writers) {//Iterates through all the printwriters
                         writer.println("MESSAGE " + name + ": " + input);//each client is sent the message
+                        System.out.println(name + ": " + input);
                     }
                 }
             } catch (IOException e) {
