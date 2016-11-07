@@ -131,7 +131,7 @@ public class Server {
         private String parse(String s){
             String temp = s.toLowerCase();
             CommandFactory cF = new CommandFactory();   //could make this a Handler attribute***
-            Icommands curCommand = cF.getCommand(temp);
+            Icommands curCommand = cF.getCommand(temp, out);
             return curCommand.perform();
 
             //To add a command simply add 'case "command":'
