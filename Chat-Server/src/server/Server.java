@@ -1,4 +1,5 @@
 package server;
+import commandP.*;//changed
 
 
 //imports
@@ -129,10 +130,12 @@ public class Server {
         //Method will be used to perform user commands
         private String parse(String s){
             String temp = s.toLowerCase();
-            int var1;
+            CommandFactory cF = new CommandFactory();   //could make this a Handler attribute***
+            Icommands curCommand = cF.getCommand(temp);
+            return curCommand.perform();
 
             //To add a command simply add 'case "command":'
-            switch(temp){
+            /*switch(temp){
 
                 case "/uptime":
                     long min = ((System.currentTimeMillis() - timeConnection) / 1000)/60;
@@ -145,36 +148,11 @@ public class Server {
                     out.println("MESSAGE " +date.toString());
                     return null;
 
-                case "/flip":
-                    var1 = (int)Math.random();
-                    if(var1 % 2 == 0){
-                        return "Flipping a coin: Heads.";
-                    }
-                    else{
-                        return "Flipping a coin: Tails.";
-                    }
-
-
-                case "/roll":
-                    var1 = (int)(Math.random() * 100);
-                    return "Rolling (0-99): " + var1 + ".";
-
-
-                case "/rolldice":
-                    var1 = ((int)(Math.random() * 10) +2);
-                    if(var1 == 2){
-                        return "Rolling two dice: Roll is " + var1 + ", snake eyes!";
-                    }
-                    else if(var1 == 12){
-                        return "Rolling two dice: Roll is " + var1 + ", lucky!";
-                    }
-                    return "Rolling two dice: Roll is " + var1 + ".";
-
                 default:
                     out.println("MESSAGE " +"Command not recognized: " + temp);
                     return null;                                                        //returns null when command is only printed to the client that called it
 
-            }//end switch
+            }//end switch*/
 
 
         }
