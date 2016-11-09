@@ -129,31 +129,11 @@ public class Server {
 
         //Method will be used to perform user commands
         private String parse(String s){
+
             String temp = s.toLowerCase();
             CommandFactory cF = new CommandFactory();   //could make this a Handler attribute***
-            Icommands curCommand = cF.getCommand(temp);
+            Icommands curCommand = cF.getCommand(temp, out, timeConnection);
             return curCommand.perform();
-
-            //To add a command simply add 'case "command":'
-            /*switch(temp){
-
-                case "/uptime":
-                    long min = ((System.currentTimeMillis() - timeConnection) / 1000)/60;
-                    long sec = ((System.currentTimeMillis() - timeConnection) / 1000) - 60*min;
-                    out.printf("MESSAGE Server has been running for %d minutes %d seconds\n", min,sec);
-                    return null;
-
-                case "/date":
-                    Date date = new Date();
-                    out.println("MESSAGE " +date.toString());
-                    return null;
-
-                default:
-                    out.println("MESSAGE " +"Command not recognized: " + temp);
-                    return null;                                                        //returns null when command is only printed to the client that called it
-
-            }//end switch*/
-
 
         }
     }//end Handler
