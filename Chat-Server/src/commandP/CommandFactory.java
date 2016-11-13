@@ -9,7 +9,7 @@ import java.io.PrintWriter;
  * objects depending on the String input
  */
 public class CommandFactory {
-    public Icommands getCommand(String input){
+    public Icommands getCommand(String input, PrintWriter out){
 
         Icommands temp = null;  //initialize temp for which the icommand will be kept
 
@@ -20,6 +20,7 @@ public class CommandFactory {
                           break;
             case "/diceroll": temp = new DiceRoll();
                           break;
+            case "/date": temp = new DateC(out);
             default: temp = new NullCommand();
                           break;
         }
