@@ -1,22 +1,22 @@
 package server;
+
 import commandP.*;//changed
+import logging.*;
 
 
 //imports
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.logging.*;
 
 
 /**
-
-    //things to do
-        1. ensure proper disconnect with client at disconnect
-        2. The server should do some logging, connection times, names. we could save it to a file.
-        3. Implement special character for data communication and server commands
-        4. make server gui, settings, logs. we could read them into a "ScrollPane" so you could read it right there.
-
-
+ * //things to do
+ * 1. ensure proper disconnect with client at disconnect
+ * 2. The server should do some logging, connection times, names. we could save it to a file.
+ * 3. Implement special character for data communication and server commands
+ * 4. make server gui, settings, logs. we could read them into a "ScrollPane" so you could read it right there.
  */
 
 //Multithread chat room server
@@ -24,7 +24,7 @@ public class Server {
     private static long timeConnection = System.currentTimeMillis();
 
     //The port that the server listens on.
-     private static final int PORT = 9001;
+    private static final int PORT = 9001;
 
     //arrayList of all the names in use
     private static ArrayList<String> names = new ArrayList<>();
@@ -45,6 +45,7 @@ public class Server {
         }
     }
 //change
+
     /**
      * A handler thread class.  Handlers are spawned from the listening
      * loop and are responsible for a dealing with a single client
@@ -56,6 +57,10 @@ public class Server {
         private Socket socket;
         private BufferedReader in;
         private PrintWriter out;
+        //view logging.setupLogger for details
+        private static final Logger LOGGER = setupLogger.startLogger(Handler.class.getName());
+
+
 
 
         public Handler(Socket socket) {
@@ -80,6 +85,7 @@ public class Server {
                     synchronized (names) {
                         if (!names.contains(name)) {//adds name to list if it doesnt already exist
                             names.add(name);
+                            LOGGER.log(Level.INFO, "Added client to server: ", name);//logs each client to file
                             break;
                         }
                     }
@@ -92,23 +98,25 @@ public class Server {
 
                 while (true) {
                     String input = in.readLine();
-                    if(shouldParse(input)){
+                    if (shouldParse(input)) {
                         input = parse(input);
                     }
-                        if(input != null && !input.equals("")) {
-                            for (PrintWriter writer : writers) {//Iterates through all the printwriters
-                                writer.println("MESSAGE " + name + ": " + input);//each client is sent the message
-                                System.out.println(name + ": " + input);
-                            }
+                    if (input != null && !input.equals("")) {
+                        for (PrintWriter writer : writers) {//Iterates through all the printwriters
+                            writer.println("MESSAGE " + name + ": " + input);//each client is sent the message
+                            System.out.println(name + ": " + input);
                         }
+                    }
                 }
             } catch (IOException e) {
                 System.out.println(e);
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
             } finally {
                 // This client is going down!  Remove its name and its print
                 // writer from the sets, and close its socket.
                 if (name != null) {
                     names.remove(name);
+                    LOGGER.log(Level.INFO, "Removing client: " + name);
                 }
                 if (out != null) {
                     writers.remove(out);
@@ -116,45 +124,29 @@ public class Server {
                 try {
                     socket.close();
                 } catch (IOException e) {
+                    LOGGER.log(Level.SEVERE, "ERROR IN FINALLY BLOCK:\n " + e.getMessage() +
+                            "\nList of clients: \n{1}", new Object[]{e, names});
                 }
             }// end finally
         }//end run
 
-        private static boolean shouldParse(String s){
-            if(!s.equals(null) && !s.isEmpty() && s.substring(0,1).equals("/")){
+        private static boolean shouldParse(String s) {
+            if (!s.equals(null) && !s.isEmpty() && s.substring(0, 1).equals("/")) {
                 return true;
             }
             return false;
         }
 
         //Method will be used to perform user commands
-        private String parse(String s){
+        private String parse(String s) {
             String temp = s.toLowerCase();
             CommandFactory cF = new CommandFactory();   //could make this a Handler attribute***
             Icommands curCommand = cF.getCommand(temp);
             return curCommand.perform();
 
-            //To add a command simply add 'case "command":'
-            /*switch(temp){
-
-                case "/uptime":
-                    long min = ((System.currentTimeMillis() - timeConnection) / 1000)/60;
-                    long sec = ((System.currentTimeMillis() - timeConnection) / 1000) - 60*min;
-                    out.printf("MESSAGE Server has been running for %d minutes %d seconds\n", min,sec);
-                    return null;
-
-                case "/date":
-                    Date date = new Date();
-                    out.println("MESSAGE " +date.toString());
-                    return null;
-
-                default:
-                    out.println("MESSAGE " +"Command not recognized: " + temp);
-                    return null;                                                        //returns null when command is only printed to the client that called it
-
-            }//end switch*/
-
-
         }
     }//end Handler
+
+
+
 }//end class
