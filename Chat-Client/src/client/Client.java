@@ -6,18 +6,6 @@ package client;
  import java.net.*;
  import javax.swing.*;
 
-       /*
-
-            //things to do
-            in the "Listening loop" we take all server instructions. which could be used to call functions and connect
-            to other classes with Client.java as the parent. we could pass these children classes a
-            reference to the client obj printwriter and buffered reader in this class. then we could easily transmit data between
-            2 people playing a game. we could use a special character to indicate to the server what to do with the data
-            eg send data to another client for tick tack toe moves. or send messages. something like ".\command" to initiate commands to server
-            or  "./tic other-user" start tic tac toe with them. the server could then read that special key prompt other client.
-            once accepted the server sends data to this client in the "Listening loop" and starts the game. this could be used to do a shit load of stuff.
-
-     */
   
  //prompts user for ip address and port then attempts to connect
   public class Client {
