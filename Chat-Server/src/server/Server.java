@@ -140,6 +140,7 @@ public class Server {
         //Method will be used to perform user commands
         private String parse(String s){
 
+
             String temp = s.toLowerCase();
             CommandFactory cF = new CommandFactory();   //could make this a Handler attribute***
             Icommands curCommand = cF.getCommand(temp, out, timeConnection);

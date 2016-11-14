@@ -27,7 +27,6 @@ public class CommandFactory {
             case "/date": temp = new DateC(out);
                           break;
             default: temp = new NullCommand(input, out);
-                          break;
         }
 
         return temp;
