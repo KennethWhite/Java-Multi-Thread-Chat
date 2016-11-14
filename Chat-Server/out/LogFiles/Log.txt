@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2016-11-13T14:47:05</date>
+  <millis>1479077225913</millis>
+  <sequence>0</sequence>
+  <logger>server.Server</logger>
+  <level>INFO</level>
+  <class>server.Server$Handler</class>
+  <method>run</method>
+  <thread>13</thread>
+  <message>Added client to server: </message>
+  <param>Kenny</param>
+</record>
+<record>
+  <date>2016-11-13T14:48:35</date>
+  <millis>1479077315719</millis>
+  <sequence>2</sequence>
+  <logger>server.Server</logger>
+  <level>INFO</level>
+  <class>server.Server$Handler</class>
+  <method>run</method>
+  <thread>13</thread>
+  <message>Removing client: Kenny</message>
+</record>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2016-11-13T15:23:50</date>
+  <millis>1479079430974</millis>
+  <sequence>0</sequence>
+  <logger>server.Server</logger>
+  <level>INFO</level>
+  <class>server.Server$Handler</class>
+  <method>run</method>
+  <thread>13</thread>
+  <message>Added client to server: </message>
+  <param>Kenny</param>
+</record>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2016-11-13T15:41:13</date>
+  <millis>1479080473032</millis>
+  <sequence>0</sequence>
+  <logger>server.Server</logger>
+  <level>INFO</level>
+  <class>server.Server$Handler</class>
+  <method>run</method>
+  <thread>13</thread>
+  <message>Added client to server: </message>
+  <param>Kenny</param>
+</record>
+<record>
+  <date>2016-11-13T15:41:15</date>
+  <millis>1479080475437</millis>
+  <sequence>1</sequence>
+  <logger>server.Server</logger>
+  <level>INFO</level>
+  <class>server.Server$Handler</class>
+  <method>run</method>
+  <thread>14</thread>
+  <message>Added client to server: </message>
+  <param>daric</param>
+</record>
+<record>
+  <date>2016-11-13T15:54:25</date>
+  <millis>1479081265665</millis>
+  <sequence>3</sequence>
+  <logger>server.Server</logger>
+  <level>INFO</level>
+  <class>server.Server$Handler</class>
+  <method>run</method>
+  <thread>13</thread>
+  <message>Removing client: Kenny</message>
+</record>
+<record>
+  <date>2016-11-13T15:54:46</date>
+  <millis>1479081286289</millis>
+  <sequence>4</sequence>
+  <logger>server.Server</logger>
+  <level>INFO</level>
+  <class>server.Server$Handler</class>
+  <method>run</method>
+  <thread>15</thread>
+  <message>Added client to server: </message>
+  <param>Kenny</param>
+</record>
+<record>
+  <date>2016-11-13T15:55:17</date>
+  <millis>1479081317090</millis>
+  <sequence>6</sequence>
+  <logger>server.Server</logger>
+  <level>INFO</level>
+  <class>server.Server$Handler</class>
+  <method>run</method>
+  <thread>14</thread>
+  <message>Removing client: daric</message>
+</record>
+<record>
+  <date>2016-11-13T16:01:09</date>
+  <millis>1479081669504</millis>
+  <sequence>8</sequence>
+  <logger>server.Server</logger>
+  <level>INFO</level>
+  <class>server.Server$Handler</class>
+  <method>run</method>
+  <thread>15</thread>
+  <message>Removing client: Kenny</message>
+</record>

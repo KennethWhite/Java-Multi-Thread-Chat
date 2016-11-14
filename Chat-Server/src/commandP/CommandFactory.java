@@ -9,7 +9,9 @@ import java.io.PrintWriter;
  * objects depending on the String input
  */
 public class CommandFactory {
+
     public Icommands getCommand(String input, PrintWriter out, long connTime){
+
 
         Icommands temp = null;  //initialize temp for which the icommand will be kept
 
@@ -22,9 +24,9 @@ public class CommandFactory {
                           break;
             case "/uptime": temp = new UpTime(out, connTime);
                           break;
-            case "/date":   temp = new DateC(out);
+            case "/date": temp = new DateC(out);
                           break;
-            default:    temp = new NullCommand(input, out);
+            default: temp = new NullCommand(input, out);
                           break;
         }
 
