@@ -102,9 +102,9 @@ public class Server {
                         input = parse(input);
                     }
                     if (input != null && !input.equals("")) {
+                        System.out.println(name + ": " + input);
                         for (PrintWriter writer : writers) {//Iterates through all the printwriters
                             writer.println("MESSAGE " + name + ": " + input);//each client is sent the message
-                            System.out.println(name + ": " + input);
                         }
                     }
                 }
