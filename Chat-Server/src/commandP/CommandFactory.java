@@ -22,14 +22,11 @@ public class CommandFactory {
                           break;
             case "/diceroll": temp = new DiceRoll();
                           break;
-
             case "/uptime": temp = new UpTime(out, connTime);
                           break;
-            case "/date":   temp = new DateC(out);
+            case "/date": temp = new DateC(out);
                           break;
-            default:    temp = new NullCommand(input, out);
-
-                          break;
+            default: temp = new NullCommand(input, out);
         }
 
         return temp;
