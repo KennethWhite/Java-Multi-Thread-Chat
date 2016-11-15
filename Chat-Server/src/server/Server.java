@@ -145,7 +145,12 @@ public class Server {
 
         }
 
-        private static boolean isData(String s){return(!s.equals(null) && s.length() > 1 && s.substring(0,2).equals(".*"));}
+        private static boolean isData(String s){
+            if (!s.equals(null) && s.length() > 1 && s.substring(0, 2).equals(".*")) {
+                return true;
+            }
+                return false;
+        }
     }//end Handler
 
 }//end class
