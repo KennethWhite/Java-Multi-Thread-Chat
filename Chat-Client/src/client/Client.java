@@ -1,22 +1,23 @@
 package client;
 
 //imports
+ import java.awt.*;
  import java.awt.event.*;
  import java.io.*;
  import java.net.*;
  import javax.swing.*;
+ import javax.swing.text.*;
 
-  
- //prompts user for ip address and port then attempts to connect
+
+//prompts user for ip address and port then attempts to connect
   public class Client {
-     //obj vars
      private BufferedReader in;
      private PrintWriter out;
      private JFrame frame = new JFrame("KDC chat");
-     private JTextField textField = new JTextField(40);
-     private JTextArea messageArea = new JTextArea(8, 40);
-  
-     //initializes the client class
+     private JTextField textField = new JTextField(80);
+     private JTextArea messageArea = new JTextArea(20, 80);
+
+//initializes the client class
      public static void main(String[] args) throws Exception {
          Client client = new Client();
          client.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -32,7 +33,7 @@ package client;
          // Layout GUI
          textField.setEditable(false);                                              //denies use of input box until name is verified
          messageArea.setEditable(false);                                            //wont display messages till ^^
-         frame.getContentPane().add(textField, "North");                            //adds input box to top of the frame
+         frame.getContentPane().add(textField, "South");                            //adds input box to top of the frame
          frame.getContentPane().add(new JScrollPane(messageArea), "Center");        //adds input box to center of the frame
          frame.pack();                                                              //ensures the content fits in the frame
  
@@ -52,7 +53,6 @@ package client;
      }
  
 
-//takes input for a name when user first connects
      private String getName() {
          return JOptionPane.showInputDialog(frame, "Choose a screen name:", "Screen name selection", JOptionPane.PLAIN_MESSAGE);
      }
@@ -62,7 +62,7 @@ package client;
  
          // Make connection and initialize streams
          String serverAddress = getServerAddress();
-         Socket socket = new Socket(serverAddress, 9001);           //creates socket connection to server
+         Socket socket = new Socket(serverAddress, 9001);                               //creates socket connection to server
          in = new BufferedReader(new InputStreamReader(socket.getInputStream()));       //buffered reader to recieve from server
          out = new PrintWriter(socket.getOutputStream(), true);                         //printwriter to write to server
 
@@ -75,11 +75,10 @@ package client;
                  textField.setEditable(true);
              } else if (line.startsWith("MESSAGE")) {
                  messageArea.append(line.substring(8) + "\n");
+             } else if(line.startsWith(".*")){
+                messageArea.append("Identify what to do with the data");                   //possibly sub ifs for separate games. each with a print writer passed.
              }
-
          }
-     }
- 
-
+     }//end run
   }
   

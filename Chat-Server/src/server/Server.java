@@ -74,30 +74,33 @@ public class Server {
                     if (name == null) {
                         return;
                     }
-                    //synchronized means no other changes can be made to 'names' while this thread is active
-                    synchronized (names) {
-                        if (!names.contains(name)) {//adds name to list if it doesnt already exist
+
+                    synchronized (names) {                                              //synchronized means no other changes can be made to 'names' while this thread is active
+                        if (!names.contains(name)) {                                    //adds name to list if it doesnt already exist
                             names.add(name);
-                            LOGGER.log(Level.INFO, "Added client to server: ", name);//logs each client to file
+                            LOGGER.log(Level.INFO, "Added client to server: ", name);   //logs each client to file
                             break;
                         }
                     }
                 }
 
 
-                out.println("NAMEACCEPTED");//displays to the client
-                writers.add(out);//adds printwriter to ArrayList
+                out.println("NAMEACCEPTED");
+                writers.add(out);                                                       //adds printwriter to ArrayList
 
 
                 while (true) {
                     String input = in.readLine();
                     if (shouldParse(input)) {
-                        input = parse(input);
+                        input = parse(input);                                           //parses input for commands
                     }
-                    if (input != null && !input.equals("")) {
+                    if(isData(input)){
+                        out.println("MESSAGE Identify what to do with the data here");          // pass data back to client
+                    }
+                    else if (input != null && !input.equals("")) {
                         System.out.println(name + ": " + input);
-                        for (PrintWriter writer : writers) {//Iterates through all the printwriters
-                            writer.println("MESSAGE " + name + ": " + input);//each client is sent the message
+                        for (PrintWriter writer : writers) {
+                            writer.println("MESSAGE " + name + ": " + input);           // sends each client is sent the message
                         }
                     }
                 }
@@ -120,8 +123,9 @@ public class Server {
                     LOGGER.log(Level.SEVERE, "ERROR IN FINALLY BLOCK:\n " + e.getMessage() +
                             "\nList of clients: \n{1}", new Object[]{e, names});
                 }
-            }// end finally
+            }
         }//end run
+
 
         private static boolean shouldParse(String s) {
             if (!s.equals(null) && !s.isEmpty() && s.substring(0, 1).equals("/")) {
@@ -131,7 +135,7 @@ public class Server {
         }
 
         //Method will be used to perform user commands
-private String parse(String s){
+        private String parse(String s){
 
             String temp = s.toLowerCase();
             CommandFactory cF = new CommandFactory();   //could make this a Handler attribute***
@@ -140,6 +144,8 @@ private String parse(String s){
             return curCommand.perform();
 
         }
+
+        private static boolean isData(String s){return(!s.equals(null) && s.length() > 1 && s.substring(0,2).equals(".*"));}
     }//end Handler
 
 }//end class
