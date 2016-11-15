@@ -11,13 +11,6 @@ import java.util.*;
 import java.util.logging.*;
 
 
-/**
- * //things to do
- * 1. ensure proper disconnect with client at disconnect
- * 2. The server should do some logging, connection times, names. we could save it to a file.
- * 3. Implement special character for data communication and server commands
- * 4. make server gui, settings, logs. we could read them into a "ScrollPane" so you could read it right there.
- */
 
 //Multithread chat room server
 public class Server {
