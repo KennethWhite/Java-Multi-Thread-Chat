@@ -38,6 +38,7 @@ import java.util.Date;
          textField.setEditable(false);                                              //denies use of input box until name is verified
          messageArea.setEditable(false);                                            //wont display messages till ^^
          saveConv.setEnabled(false);//change***
+         saveConv.setSize(75,25);//changed***
          frame.add(saveConv);//change***
          frame.getContentPane().add(textField, "North");                            //adds input box to top of the frame
          frame.getContentPane().add(new JScrollPane(messageArea), "Center");        //adds input box to center of the frame
