@@ -1,4 +1,4 @@
 # chat
-A simple chat application used to learn about TCP/IP, as well as gain some experience working with Git.
+A simple chat application used to learn about TCP/IP, gain some experience working with Git as well as gain experience working on group projects.
 
-I will attempt to add this comment and not delete the project...
+
