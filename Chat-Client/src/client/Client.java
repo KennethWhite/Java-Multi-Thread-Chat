@@ -62,13 +62,15 @@ import java.util.Date;
                      File file1 = new File(filePath);
                      file1.mkdirs();
                      File file2 = new File(file1, fileName);
-                     file2.createNewFile();
-                     PrintStream temp = new PrintStream(file2);
+                     if(!file2.exists()) {
+                         file2.createNewFile();
+                     }
+                     BufferedWriter temp = new BufferedWriter(new FileWriter(file2, true));
                      DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                      String convo = getConvo();
-                     temp.print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n" +
+                     temp.write("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n" +
                                 convo + "\n\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<" + (dateFormat.format(new Date())));
-                     temp.close();
+                     temp.close();//append or overwrite???
                  }catch(Exception e){
                      //TODO
                  }

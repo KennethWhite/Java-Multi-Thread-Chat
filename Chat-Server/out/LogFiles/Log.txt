@@ -853,3 +853,124 @@
   <thread>30</thread>
   <message>Removing client: dairc</message>
 </record>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2016-11-16T10:03:38</date>
+  <millis>1479319418072</millis>
+  <sequence>0</sequence>
+  <logger>server.Server</logger>
+  <level>INFO</level>
+  <class>server.Server$Handler</class>
+  <method>run</method>
+  <thread>12</thread>
+  <message>Added client to server: </message>
+  <param>daric</param>
+</record>
+<record>
+  <date>2016-11-16T10:08:35</date>
+  <millis>1479319715309</millis>
+  <sequence>2</sequence>
+  <logger>server.Server</logger>
+  <level>INFO</level>
+  <class>server.Server$Handler</class>
+  <method>run</method>
+  <thread>12</thread>
+  <message>Removing client: daric</message>
+</record>
+<record>
+  <date>2016-11-16T10:09:32</date>
+  <millis>1479319772233</millis>
+  <sequence>3</sequence>
+  <logger>server.Server</logger>
+  <level>INFO</level>
+  <class>server.Server$Handler</class>
+  <method>run</method>
+  <thread>13</thread>
+  <message>Added client to server: </message>
+  <param>d</param>
+</record>
+<record>
+  <date>2016-11-16T10:12:27</date>
+  <millis>1479319947507</millis>
+  <sequence>5</sequence>
+  <logger>server.Server</logger>
+  <level>INFO</level>
+  <class>server.Server$Handler</class>
+  <method>run</method>
+  <thread>13</thread>
+  <message>Removing client: d</message>
+</record>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2016-11-16T10:25:44</date>
+  <millis>1479320744910</millis>
+  <sequence>0</sequence>
+  <logger>server.Server</logger>
+  <level>INFO</level>
+  <class>server.Server$Handler</class>
+  <method>run</method>
+  <thread>12</thread>
+  <message>Added client to server: </message>
+  <param>daric</param>
+</record>
+<record>
+  <date>2016-11-16T10:27:41</date>
+  <millis>1479320861383</millis>
+  <sequence>2</sequence>
+  <logger>server.Server</logger>
+  <level>INFO</level>
+  <class>server.Server$Handler</class>
+  <method>run</method>
+  <thread>12</thread>
+  <message>Removing client: daric</message>
+</record>
+<record>
+  <date>2016-11-16T10:28:32</date>
+  <millis>1479320912901</millis>
+  <sequence>3</sequence>
+  <logger>server.Server</logger>
+  <level>INFO</level>
+  <class>server.Server$Handler</class>
+  <method>run</method>
+  <thread>13</thread>
+  <message>Added client to server: </message>
+  <param>daric</param>
+</record>
+<record>
+  <date>2016-11-16T10:31:04</date>
+  <millis>1479321064748</millis>
+  <sequence>5</sequence>
+  <logger>server.Server</logger>
+  <level>INFO</level>
+  <class>server.Server$Handler</class>
+  <method>run</method>
+  <thread>13</thread>
+  <message>Removing client: daric</message>
+</record>
+<record>
+  <date>2016-11-16T10:31:25</date>
+  <millis>1479321085576</millis>
+  <sequence>6</sequence>
+  <logger>server.Server</logger>
+  <level>INFO</level>
+  <class>server.Server$Handler</class>
+  <method>run</method>
+  <thread>14</thread>
+  <message>Added client to server: </message>
+  <param>daric</param>
+</record>
+<record>
+  <date>2016-11-16T10:32:25</date>
+  <millis>1479321145245</millis>
+  <sequence>8</sequence>
+  <logger>server.Server</logger>
+  <level>INFO</level>
+  <class>server.Server$Handler</class>
+  <method>run</method>
+  <thread>14</thread>
+  <message>Removing client: daric</message>
+</record>
