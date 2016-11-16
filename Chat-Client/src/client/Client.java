@@ -33,6 +33,7 @@ package client;
          // Layout GUI
          textField.setEditable(false);                                              //denies use of input box until name is verified
          messageArea.setEditable(false);                                            //wont display messages till ^^
+         messageArea.setBackground(Color.LIGHT_GRAY);
          frame.getContentPane().add(textField, "South");                            //adds input box to top of the frame
          frame.getContentPane().add(new JScrollPane(messageArea), "Center");        //adds input box to center of the frame
          frame.pack();                                                              //ensures the content fits in the frame
