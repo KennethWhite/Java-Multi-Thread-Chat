@@ -17,7 +17,7 @@ import java.util.Date;
      private BufferedReader in;
      private PrintWriter out;
      private JFrame frame = new JFrame("KDC chat");
-     private JButton saveConv = new JButton("Save Conversation");//change***
+     private JButton saveConv = new JButton("Save Convo");//change***
      private JTextField textField = new JTextField(40);
      private JTextArea messageArea = new JTextArea(8, 40);
   
@@ -38,10 +38,9 @@ import java.util.Date;
          textField.setEditable(false);                                              //denies use of input box until name is verified
          messageArea.setEditable(false);                                            //wont display messages till ^^
          saveConv.setEnabled(false);//change***
+         frame.add(saveConv);//change***
          frame.getContentPane().add(textField, "North");                            //adds input box to top of the frame
          frame.getContentPane().add(new JScrollPane(messageArea), "Center");        //adds input box to center of the frame
-         frame.add(saveConv, "South");//change***
-         saveConv.setPreferredSize(new Dimension(20,20));//changed**
          frame.pack();                                                              //ensures the content fits in the frame
  
          // Add Listeners for keys press
