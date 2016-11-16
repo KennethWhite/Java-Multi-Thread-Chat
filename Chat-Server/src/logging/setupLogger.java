@@ -2,22 +2,19 @@ package logging;
 
 import server.Server;
 
-import java.util.logging.*;
+import java.util.logging.Logger;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
 
-
-/**
- * Created by Kenny on 11/13/2016.
-
- */
 
 public class SetupLogger {
     /*
     *
      * Filehandlers are connected to their respective log files, with APPEND set to TRUE
      * Filehandlers/Levels;
-     *      Level.SEVERE    Writes to the error log, 'ErrorLog.xml'
-     *      Level.INFO      Writes to general log, 'Log.xml'
-     *      Level.FINER     Writes to the debug log, 'Debug.xml'
+     *      Level.SEVERE    Writes to the error log, 'ErrorLog.txt'
+     *      Level.INFO      Writes to general log, 'Log.txt'
+     *      Level.FINER     Writes to the debug log, 'Debug.txt'
      *
      * All handlers are then added to the logger, which is returned
      */
