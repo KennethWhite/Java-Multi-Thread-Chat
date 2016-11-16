@@ -18,8 +18,8 @@ import java.util.Date;
      private PrintWriter out;
      private JFrame frame = new JFrame("KDC chat");
      private JButton saveConv = new JButton("Save Convo");//change***
-     private JTextField textField = new JTextField(40);
-     private JTextArea messageArea = new JTextArea(8, 40);
+     private JTextField textField = new JTextField(80);
+     private JTextArea messageArea = new JTextArea(20, 80);
 
      //initializes the client class
      public static void main(String[] args) throws Exception {
@@ -37,12 +37,11 @@ import java.util.Date;
          // Layout GUI
          textField.setEditable(false);                                              //denies use of input box until name is verified
          messageArea.setEditable(false);                                            //wont display messages till ^^
-         messageArea.setBackground(Color.LIGHT_GRAY);
-         frame.getContentPane().add(textField, "South");                            //adds input box to top of the frame
          saveConv.setEnabled(false);//change***
+         messageArea.setBackground(Color.LIGHT_GRAY);
          saveConv.setSize(75,25);//changed***
-         frame.add(saveConv);//change***
-         frame.getContentPane().add(textField, "North");                            //adds input box to top of the frame
+         frame.getContentPane().add(saveConv);//change***
+         frame.getContentPane().add(textField, "South");                            //adds input box to bottom of the frame
          frame.getContentPane().add(new JScrollPane(messageArea), "Center");        //adds input box to center of the frame
          frame.pack();                                                              //ensures the content fits in the frame
  
