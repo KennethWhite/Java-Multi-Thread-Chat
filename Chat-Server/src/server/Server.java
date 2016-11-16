@@ -51,7 +51,7 @@ public class Server {
         private BufferedReader in;
         private PrintWriter out;
         //view logging.setupLogger for details
-        private static final Logger LOGGER = setupLogger.startLogger(Handler.class.getName());
+        private static final Logger LOGGER = SetupLogger.startLogger(Handler.class.getName());
 
 
 
