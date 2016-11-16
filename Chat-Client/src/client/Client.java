@@ -2,9 +2,13 @@ package client;
 
 //imports
  import java.awt.event.*;
+ import java.awt.Dimension;
  import java.io.*;
  import java.net.*;
  import javax.swing.*;
+import java.text.SimpleDateFormat;
+import java.text.DateFormat;
+import java.util.Date;
 
   
  //prompts user for ip address and port then attempts to connect
@@ -13,6 +17,7 @@ package client;
      private BufferedReader in;
      private PrintWriter out;
      private JFrame frame = new JFrame("KDC chat");
+     private JButton saveConv = new JButton("Save Conversation");//change***
      private JTextField textField = new JTextField(40);
      private JTextArea messageArea = new JTextArea(8, 40);
   
@@ -32,8 +37,11 @@ package client;
          // Layout GUI
          textField.setEditable(false);                                              //denies use of input box until name is verified
          messageArea.setEditable(false);                                            //wont display messages till ^^
+         saveConv.setEnabled(false);//change***
          frame.getContentPane().add(textField, "North");                            //adds input box to top of the frame
          frame.getContentPane().add(new JScrollPane(messageArea), "Center");        //adds input box to center of the frame
+         frame.add(saveConv, "South");//change***
+         saveConv.setPreferredSize(new Dimension(20,20));//changed**
          frame.pack();                                                              //ensures the content fits in the frame
  
          // Add Listeners for keys press
@@ -42,8 +50,47 @@ package client;
                  out.println(textField.getText());           //takes input sends to server
                  textField.setText("");                      //clears txt box
              }
+         });
+
+         //Wait for click to save
+         saveConv.addActionListener(new ActionListener() {//MESSY FIX UP***
+             public void actionPerformed(ActionEvent c) {
+                 String filePath = JOptionPane.showInputDialog("Enter file path");
+                 String fileName = JOptionPane.showInputDialog("Enter file name");
+                 try{
+                     filePath += "\\savedconvo";
+                     File file1 = new File(filePath);
+                     file1.mkdirs();
+                     File file2 = new File(file1, fileName);
+                     if(!file2.exists()) {
+                         file2.createNewFile();
+                     }
+                     BufferedWriter temp = new BufferedWriter(new FileWriter(file2, true));
+                     DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                     String convo = getConvo();
+                     temp.write("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n" +
+                                convo + "\n\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<" + (dateFormat.format(new Date())));
+                     temp.close();//append or overwrite???
+                 }catch(Exception e){
+                     //TODO
+                 }
+             }
+         });
+
+     }
+
+     private String getConvo(){
+
+         String temp;
+
+         temp = messageArea.getText();
+
+         if(temp == null){
+             temp = "";
          }
-    ); }
+
+         return temp;
+     }
  
 
 //Prompt for and return the address of the server before a user connects.
@@ -73,6 +120,7 @@ package client;
                  out.println(getName());
              } else if (line.startsWith("NAMEACCEPTED")) {
                  textField.setEditable(true);
+                 saveConv.setEnabled(true);//change***
              } else if (line.startsWith("MESSAGE")) {
                  messageArea.append(line.substring(8) + "\n");
              }
