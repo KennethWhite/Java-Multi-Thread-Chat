@@ -3,10 +3,13 @@ package client;
 //imports
  import java.awt.*;
  import java.awt.event.*;
+ import java.awt.Dimension;
  import java.io.*;
  import java.net.*;
  import javax.swing.*;
- import javax.swing.text.*;
+import java.text.SimpleDateFormat;
+import java.text.DateFormat;
+import java.util.Date;
 
 
 //prompts user for ip address and port then attempts to connect
@@ -14,10 +17,11 @@ package client;
      private BufferedReader in;
      private PrintWriter out;
      private JFrame frame = new JFrame("KDC chat");
-     private JTextField textField = new JTextField(80);
-     private JTextArea messageArea = new JTextArea(20, 80);
+     private JButton saveConv = new JButton("Save Convo");//change***
+     private JTextField textField = new JTextField(40);
+     private JTextArea messageArea = new JTextArea(8, 40);
 
-//initializes the client class
+     //initializes the client class
      public static void main(String[] args) throws Exception {
          Client client = new Client();
          client.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -35,6 +39,10 @@ package client;
          messageArea.setEditable(false);                                            //wont display messages till ^^
          messageArea.setBackground(Color.LIGHT_GRAY);
          frame.getContentPane().add(textField, "South");                            //adds input box to top of the frame
+         saveConv.setEnabled(false);//change***
+         saveConv.setSize(75,25);//changed***
+         frame.add(saveConv);//change***
+         frame.getContentPane().add(textField, "North");                            //adds input box to top of the frame
          frame.getContentPane().add(new JScrollPane(messageArea), "Center");        //adds input box to center of the frame
          frame.pack();                                                              //ensures the content fits in the frame
  
@@ -44,8 +52,47 @@ package client;
                  out.println(textField.getText());           //takes input sends to server
                  textField.setText("");                      //clears txt box
              }
+         });
+
+         //Wait for click to save
+         saveConv.addActionListener(new ActionListener() {//MESSY FIX UP***
+             public void actionPerformed(ActionEvent c) {
+                 String filePath = JOptionPane.showInputDialog("Enter file path");
+                 String fileName = JOptionPane.showInputDialog("Enter file name");
+                 try{
+                     filePath += "\\savedconvo";
+                     File file1 = new File(filePath);
+                     file1.mkdirs();
+                     File file2 = new File(file1, fileName);
+                     if(!file2.exists()) {
+                         file2.createNewFile();
+                     }
+                     BufferedWriter temp = new BufferedWriter(new FileWriter(file2, true));
+                     DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                     String convo = getConvo();
+                     temp.write("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n" +
+                                convo + "\n\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<" + (dateFormat.format(new Date())));
+                     temp.close();//append or overwrite???
+                 }catch(Exception e){
+                     //TODO
+                 }
+             }
+         });
+
+     }
+
+     private String getConvo(){
+
+         String temp;
+
+         temp = messageArea.getText();
+
+         if(temp == null){
+             temp = "";
          }
-    ); }
+
+         return temp;
+     }
  
 
 //Prompt for and return the address of the server before a user connects.
@@ -74,6 +121,7 @@ package client;
                  out.println(getName());
              } else if (line.startsWith("NAMEACCEPTED")) {
                  textField.setEditable(true);
+                 saveConv.setEnabled(true);//change***
              } else if (line.startsWith("MESSAGE")) {
                  messageArea.append(line.substring(8) + "\n");
              } else if(line.startsWith(".*")){
