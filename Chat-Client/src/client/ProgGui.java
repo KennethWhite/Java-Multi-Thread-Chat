@@ -70,13 +70,12 @@ public class ProgGui extends JFrame implements ActionListener {
 
 
     private void saveConv(){                                                                //maybe move logic to another class other than gui?
-        String filePath = JOptionPane.showInputDialog("Enter file path");
+        String filePath = JOptionPane.showInputDialog("Enter folder name");
         String fileName = JOptionPane.showInputDialog("Enter file name");
         try {
-            filePath += "\\savedconvo";                                                     //maybe change so the convos saved are in a centralized folder rather than individual
-            File file1 = new File(filePath);
+            File file1 = new File("SavedConversations\\" + filePath);                       //made it save to central folder
             file1.mkdirs();
-            File file2 = new File(file1, fileName);
+            File file2 = new File(file1, fileName+".txt");;
             if (!file2.exists()) {
                 file2.createNewFile();
             }

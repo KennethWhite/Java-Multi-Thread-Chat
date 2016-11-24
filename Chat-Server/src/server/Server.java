@@ -94,10 +94,10 @@ public class Server {
                     if (shouldParse(input)) {
                         input = parse(input);                                           //parses input for commands
                     }
-                    if(isData(input)){
+                    else if(isData(input)){
                         out.println("MESSAGE Identify what to do with the data here");          // pass data back to client
                     }
-                    else if (input != null && !input.equals("")) {
+                    if (input != null && !input.equals("")) {
                         System.out.println(name + ": " + input);
                         for (PrintWriter writer : writers) {
                             writer.println("MESSAGE " + name + ": " + input);           // sends each client is sent the message
