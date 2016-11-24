@@ -46,11 +46,11 @@ public class Client {
      }
 
     private String getAddr(){
-         int reply = JOptionPane.showConfirmDialog(null,"Would you like to load a server?","Load Server?",JOptionPane.YES_NO_OPTION);
+         int reply = JOptionPane.showConfirmDialog(null,"Would you like to load a server?\n(hardcoded until implemented)","Load Server?",JOptionPane.YES_NO_OPTION);
         String svr;
         if(reply == JOptionPane.YES_OPTION){
             System.out.println("Load server list");
-            svr = "10.0.0.217";
+            svr = "10.0.0.217";                                                                                                      ///////change this address to the one you connect to often for testing so its easier to connect until server list is made\\\\\\\
         }
         else{
             svr = getServerAddress();

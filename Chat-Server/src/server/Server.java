@@ -95,7 +95,8 @@ public class Server {
                         input = parse(input);                                           //parses input for commands
                     }
                     else if(isData(input)){
-                        out.println("MESSAGE Identify what to do with the data here");          // pass data back to client
+                        out.println("MESSAGE Data received but invalid/no destination");          // pass data back to client
+                        input = null;
                     }
                     if (input != null && !input.equals("")) {
                         System.out.println(name + ": " + input);
