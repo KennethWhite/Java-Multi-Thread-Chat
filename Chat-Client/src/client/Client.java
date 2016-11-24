@@ -1,6 +1,8 @@
 package client;
 
 //imports
+ import javafx.scene.layout.Pane;
+
  import java.awt.*;
  import java.awt.event.*;
  import java.awt.Dimension;
@@ -13,118 +15,79 @@ import java.util.Date;
 
 
 //prompts user for ip address and port then attempts to connect
-  public class Client {
-     private BufferedReader in;
-     private PrintWriter out;
-     private JFrame frame = new JFrame("KDC chat");
-     private JButton saveConv = new JButton("Save Convo");//change***
-     private JTextField textField = new JTextField(80);
-     private JTextArea messageArea = new JTextArea(20, 80);
+public class Client {
+    private BufferedReader in;
+    private PrintWriter out;
+    private ProgGui gui;
+
 
      //initializes the client class
      public static void main(String[] args) throws Exception {
          Client client = new Client();
-         client.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-         client.frame.setVisible(true);
          client.run();
-      }
+     }
      
 
 
 //the object Client.java
      private Client() {
- 
-         // Layout GUI
-         textField.setEditable(false);                                              //denies use of input box until name is verified
-         messageArea.setEditable(false);                                            //wont display messages till ^^
-         saveConv.setEnabled(false);//change***
-         messageArea.setBackground(Color.LIGHT_GRAY);
-         saveConv.setSize(75,25);//changed***
-         frame.getContentPane().add(saveConv);//change***
-         frame.getContentPane().add(textField, "South");                            //adds input box to bottom of the frame
-         frame.getContentPane().add(new JScrollPane(messageArea), "Center");        //adds input box to center of the frame
-         frame.pack();                                                              //ensures the content fits in the frame
- 
-         // Add Listeners for keys press
-         textField.addActionListener(new ActionListener() {
-             public void actionPerformed(ActionEvent e) {   //for 'enter' key
-                 out.println(textField.getText());           //takes input sends to server
-                 textField.setText("");                      //clears txt box
-             }
-         });
-
-         //Wait for click to save
-         saveConv.addActionListener(new ActionListener() {//MESSY FIX UP***
-             public void actionPerformed(ActionEvent c) {
-                 String filePath = JOptionPane.showInputDialog("Enter file path");
-                 String fileName = JOptionPane.showInputDialog("Enter file name");
-                 try{
-                     filePath += "\\savedconvo";
-                     File file1 = new File(filePath);
-                     file1.mkdirs();
-                     File file2 = new File(file1, fileName);
-                     if(!file2.exists()) {
-                         file2.createNewFile();
-                     }
-                     BufferedWriter temp = new BufferedWriter(new FileWriter(file2, true));
-                     DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-                     String convo = getConvo();
-                     temp.write("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n" +
-                                convo + "\n\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<" + (dateFormat.format(new Date())));
-                     temp.close();//append or overwrite???
-                 }catch(Exception e){
-                     //TODO
-                 }
-             }
-         });
 
      }
 
-     private String getConvo(){
-
-         String temp;
-
-         temp = messageArea.getText();
-
-         if(temp == null){
-             temp = "";
-         }
-
-         return temp;
-     }
  
 
 //Prompt for and return the address of the server before a user connects.
      private String getServerAddress() {
-         return JOptionPane.showInputDialog(frame, "Enter IP Address of the Server:", "Welcome to the Chatter", JOptionPane.QUESTION_MESSAGE);
+         return JOptionPane.showInputDialog(null, "Enter IP Address of the Server:", "Welcome to the Chatter", JOptionPane.QUESTION_MESSAGE);
      }
- 
 
      private String getName() {
-         return JOptionPane.showInputDialog(frame, "Choose a screen name:", "Screen name selection", JOptionPane.PLAIN_MESSAGE);
+         return JOptionPane.showInputDialog(null, "Choose a screen name:", "Screen name selection", JOptionPane.PLAIN_MESSAGE);
      }
+
+    private String getAddr(){
+         int reply = JOptionPane.showConfirmDialog(null,"Would you like to load a server?","Load Server?",JOptionPane.YES_NO_OPTION);
+        String svr;
+        if(reply == JOptionPane.YES_OPTION){
+            System.out.println("Load server list");
+            svr = "10.0.0.217";
+        }
+        else{
+            svr = getServerAddress();
+        }
+        return  svr;
+    }
+
+    private String loadSvrList(){
+
+        return null;
+    }
  
  //Main looped used to update client from server and vise versa
      private void run() throws IOException {
  
          // Make connection and initialize streams
-         String serverAddress = getServerAddress();
+         String serverAddress = getAddr();
          Socket socket = new Socket(serverAddress, 9001);                               //creates socket connection to server
          in = new BufferedReader(new InputStreamReader(socket.getInputStream()));       //buffered reader to recieve from server
          out = new PrintWriter(socket.getOutputStream(), true);                         //printwriter to write to server
 
+
     //listening loop
          while (true) {
              String line = in.readLine();
-             if (line.startsWith("SUBMITNAME")) {
-                 out.println(getName());
-             } else if (line.startsWith("NAMEACCEPTED")) {
-                 textField.setEditable(true);
-                 saveConv.setEnabled(true);//change***
-             } else if (line.startsWith("MESSAGE")) {
-                 messageArea.append(line.substring(8) + "\n");
-             } else if(line.startsWith(".*")){
-                messageArea.append("Identify what to do with the data");                   //possibly sub ifs for separate games. each with a print writer passed.
+             if (line != null) {
+                 if (line.startsWith("SUBMITNAME")) {
+                     out.println(getName());
+                 } else if (line.startsWith("NAMEACCEPTED")) {
+                     gui = new ProgGui();                                       //waits till fully connected to server before loading gui
+                     gui.getTextField().setEditable(true);
+                     gui.setOut(out);
+                 } else if (line.startsWith("MESSAGE")) {
+                     gui.getMessageArea().append(line.substring(8) + "\n");
+                 } else if (line.startsWith(".*")) {
+                     gui.getMessageArea().append("Identify what to do with the data");                   //possibly sub ifs for separate games. each with a print writer passed.
+                 }
              }
          }
      }//end run
