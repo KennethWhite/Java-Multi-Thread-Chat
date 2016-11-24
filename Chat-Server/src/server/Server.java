@@ -145,7 +145,7 @@ public class Server {
 
         }
 
-        private static boolean isData(String s){
+        private static boolean isData(String s){                                                        //sometimes throws error. IDK why
             if (!s.equals(null) && s.length() > 1 && s.substring(0, 2).equals(".*")) {
                 return true;
             }
