@@ -94,10 +94,11 @@ public class Server {
                     if (shouldParse(input)) {
                         input = parse(input);                                           //parses input for commands
                     }
-                    if(isData(input)){
-                        out.println("MESSAGE Identify what to do with the data here");          // pass data back to client
+                    else if(isData(input)){
+                        out.println("MESSAGE Data received but invalid/no destination");          // pass data back to client
+                        input = null;
                     }
-                    else if (input != null && !input.equals("")) {
+                    if (input != null && !input.equals("")) {
                         System.out.println(name + ": " + input);
                         for (PrintWriter writer : writers) {
                             writer.println("MESSAGE " + name + ": " + input);           // sends each client is sent the message
@@ -145,7 +146,7 @@ public class Server {
 
         }
 
-        private static boolean isData(String s){
+        private static boolean isData(String s){                                                        //sometimes throws error. IDK why
             if (!s.equals(null) && s.length() > 1 && s.substring(0, 2).equals(".*")) {
                 return true;
             }
