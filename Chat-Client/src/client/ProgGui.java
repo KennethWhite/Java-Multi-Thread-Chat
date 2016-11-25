@@ -1,5 +1,6 @@
 package client;
 
+import logging.SetupLogger;
 import sun.font.TrueTypeFont;
 
 import javax.swing.*;
@@ -12,10 +13,13 @@ import java.awt.event.*;
 import java.io.*;
 import java.text.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ProgGui extends JFrame implements ActionListener {
     private PrintWriter out;
-//pannels
+    private static final Logger LOGGER = SetupLogger.startLogger(Client.class.getName());
+//panels
     private JFrame frame = new JFrame("KDC chat");
     private JPanel main = new JPanel();
     private JPanel buttons = new JPanel();
@@ -27,7 +31,7 @@ public class ProgGui extends JFrame implements ActionListener {
 
 //buttons
     private JLabel Ideas = new JLabel("games tab?   Friends/groups tab?");//.rm
-    private JButton saveConv_btn = new JButton("Save Convo");
+    private JButton saveConv_btn = new JButton("Save Conversation");
     private JButton settings_btn = new JButton("Setings");
 
 
@@ -228,8 +232,14 @@ public class ProgGui extends JFrame implements ActionListener {
             else if(e.getSource() == setting5_btn){
                 System.out.printf("Setting number 5 is : %s\n",setting5_btn.getSelectedItem());
             }
-            else if(e.getSource() == save_btn){
-                JOptionPane.showConfirmDialog(this,"properties saving is not yet implemented","Warning", JOptionPane.CLOSED_OPTION);
+            else if(e.getSource() == save_btn) {
+                try {
+                    JOptionPane.showConfirmDialog(this, "properties saving is not yet implemented", "Warning", JOptionPane.CLOSED_OPTION);
+                }
+                catch(Exception ex){
+                    messageArea.append("WARNING: Error occurred saving to file: \n" + ex.getMessage());
+                    LOGGER.log(Level.SEVERE, "Error occurred writing to file:\n" + ex.getMessage() , ex);
+                }
             }
 
             //all saving to properties file here. save all changes when applied
