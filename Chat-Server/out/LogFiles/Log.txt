@@ -470,3 +470,18 @@
   <thread>14</thread>
   <message>Removing client: cw</message>
 </record>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2016-11-24T16:39:00</date>
+  <millis>1480034340195</millis>
+  <sequence>0</sequence>
+  <logger>server.Server$Handler</logger>
+  <level>INFO</level>
+  <class>server.Server$Handler</class>
+  <method>run</method>
+  <thread>13</thread>
+  <message>Added client to server: </message>
+  <param>Kenny</param>
+</record>

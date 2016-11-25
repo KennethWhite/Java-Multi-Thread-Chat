@@ -1,17 +1,12 @@
 package client;
 
 //imports
- import javafx.scene.layout.Pane;
-
- import java.awt.*;
- import java.awt.event.*;
- import java.awt.Dimension;
+ import logging.SetupLogger;
  import java.io.*;
  import java.net.*;
  import javax.swing.*;
-import java.text.SimpleDateFormat;
-import java.text.DateFormat;
-import java.util.Date;
+ import java.util.logging.Level;
+ import java.util.logging.Logger;
 
 
 //prompts user for ip address and port then attempts to connect
@@ -19,12 +14,17 @@ public class Client {
     private BufferedReader in;
     private PrintWriter out;
     private ProgGui gui;
-
+    private static final Logger LOGGER = SetupLogger.startLogger(Client.class.getName());
 
      //initializes the client class
-     public static void main(String[] args) throws Exception {
-         Client client = new Client();
-         client.run();
+     public static void main(String[] args){
+         try {
+             Client client = new Client();
+             client.run();
+         }
+         catch(Exception e){
+             LOGGER.log(Level.SEVERE, "An unexpected fatal error occurred while running client: " + e.getMessage(), e);
+         }
      }
      
 
@@ -46,24 +46,29 @@ public class Client {
      }
 
     private String getAddr(){
-         int reply = JOptionPane.showConfirmDialog(null,"Would you like to load a server?\n(hardcoded until implemented)","Load Server?",JOptionPane.YES_NO_OPTION);
-        String svr;
-        if(reply == JOptionPane.YES_OPTION){
-            System.out.println("Load server list");
-            svr = "10.0.0.217";                                                                                                      ///////change this address to the one you connect to often for testing so its easier to connect until server list is made\\\\\\\
+        try {
+            int reply = JOptionPane.showConfirmDialog(null, "Would you like to load a server?\n(No prompts for IP address)", "Load Server?", JOptionPane.YES_NO_OPTION);
+            String svr;
+            if (reply == JOptionPane.YES_OPTION) {
+                System.out.println("Load server list");
+                svr = "localhost";                                                                                                      ///////change this address to the one you connect to often for testing so its easier to connect until server list is made\\\\\\\
+            } else {
+                svr = getServerAddress();
+            }
+            return svr;
         }
-        else{
-            svr = getServerAddress();
+        catch(Exception ex){
+            LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
         }
-        return  svr;
+        return null;
     }
 
     private String loadSvrList(){
-
+        //create pane with scroll box to load recent/saved servers. return server selected
         return null;
     }
  
- //Main looped used to update client from server and vise versa
+     //Main looped used to update client from server and vise versa
      private void run() throws IOException {
  
          // Make connection and initialize streams
@@ -73,7 +78,8 @@ public class Client {
          out = new PrintWriter(socket.getOutputStream(), true);                         //printwriter to write to server
 
 
-    //listening loop
+     //listening loop
+
          while (true) {
              String line = in.readLine();
              if (line != null) {
