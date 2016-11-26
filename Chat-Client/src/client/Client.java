@@ -5,12 +5,14 @@ package client;
  import java.io.*;
  import java.net.*;
  import javax.swing.*;
+ import java.util.Properties;
  import java.util.logging.Level;
  import java.util.logging.Logger;
 
 
 //prompts user for ip address and port then attempts to connect
 public class Client {
+    private Properties settings;
     private BufferedReader in;
     private PrintWriter out;
     private ProgGui gui;
@@ -21,6 +23,9 @@ public class Client {
          try {
              Client client = new Client();
              client.run();
+         }
+         catch (IOException e){
+             LOGGER.log(Level.SEVERE, "An unexpected fatal error occurred while running client: " + e.getMessage(), e);
          }
          catch(Exception e){
              LOGGER.log(Level.SEVERE, "An unexpected fatal error occurred while running client: " + e.getMessage(), e);
@@ -47,11 +52,11 @@ public class Client {
 
     private String getAddr(){
         try {
-            int reply = JOptionPane.showConfirmDialog(null, "Would you like to load a server?\n(No prompts for IP address)", "Load Server?", JOptionPane.YES_NO_OPTION);
+            int reply = JOptionPane.showConfirmDialog(null, "Would you like connect to this computer?\n(No prompts for IP address)", "Load Server?", JOptionPane.YES_NO_OPTION);
             String svr;
             if (reply == JOptionPane.YES_OPTION) {
                 System.out.println("Load server list");
-                svr = "localhost";                                                                                                      ///////change this address to the one you connect to often for testing so its easier to connect until server list is made\\\\\\\
+                svr = "localhost";                                                                                                      //.rm this will load a JPane containing all saved servers
             } else {
                 svr = getServerAddress();
             }
@@ -78,10 +83,12 @@ public class Client {
          out = new PrintWriter(socket.getOutputStream(), true);                         //printwriter to write to server
 
 
-     //listening loop
 
+     //listening loop
          while (true) {
-             String line = in.readLine();
+             try {
+                 String line = in.readLine();
+
              if (line != null) {
                  if (line.startsWith("SUBMITNAME")) {
                      out.println(getName());
@@ -96,6 +103,10 @@ public class Client {
                  }
              }
          }
+             catch (Exception e){
+                 LOGGER.log(Level.SEVERE, e.getMessage(), e);
+             }
      }//end run
   }
+}
   

@@ -28,7 +28,7 @@ public class SetupLogger {
 
 
             Logger ret = Logger.getLogger(name);
-            FileHandler errOut = new FileHandler("./out/LogFiles/ErrorLog.txt", true);
+            FileHandler errOut = new FileHandler("./out/LogFiles/ErrorLog.txt", true);                                  //.rm here we should check if the file exists, if not make one
             FileHandler genLog = new FileHandler("./out/LogFiles/Log.txt", true);
             FileHandler debugLog = new FileHandler("./out/LogFiles/Debug.txt", true);
 
