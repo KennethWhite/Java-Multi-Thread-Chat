@@ -78,7 +78,7 @@ public class Server {
                     synchronized (names) {                                              //synchronized means no other changes can be made to 'names' while this thread is active
                         if (!names.contains(name)) {                                    //adds name to list if it doesnt already exist
                             names.add(name);
-                            LOGGER.log(Level.INFO, "Added client to server: ", name);   //logs each client to file
+                            LOGGER.log(Level.INFO, "Added client to server: " + name);   //logs each client to file
                             break;
                         }
                     }
