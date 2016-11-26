@@ -68,7 +68,6 @@ public class ProgGui extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {                                    //all button input for txt communication
 
         if (e.getSource() == settings_btn) {                //settings gui
-            System.out.println("Settings and such");
             main.setVisible(false);
             buttons.setVisible(false);
             frame.add(settings);
@@ -86,7 +85,7 @@ public class ProgGui extends JFrame implements ActionListener {
 
 
 
-//maybe move logic to another class other than gui?
+//maybe move to LoadSave class
     private void saveConv(){
         String filePath = JOptionPane.showInputDialog("Enter folder name");
         String fileName = JOptionPane.showInputDialog("Enter file name");
@@ -205,11 +204,34 @@ public class ProgGui extends JFrame implements ActionListener {
             this.add(new JLabel());
             this.add(save_btn);
 
-            setSettings();
+            loadSettings();
         }
 
-        private void setSettings(){
+//applies saved values to buttons
+//applies saved values to buttons
+//applies saved values to buttons
+        private void loadSettings(){
+            try {
+                Properties usrPref = LoadSave.getPref();
+            //for booleans
+                setting1_btn.setSelected(Boolean.valueOf(usrPref.getProperty("setting 1")));
+                setting3_btn.setSelected(Boolean.valueOf(usrPref.getProperty("setting 3")));
+                setting4_btn.setSelected(Boolean.valueOf(usrPref.getProperty("setting 4")));
 
+            //for Strings
+                setting5_btn.setSelectedItem(usrPref.getProperty("setting 5"));
+
+            //for ints
+                setting2_btn.setValue(Integer.parseInt(usrPref.getProperty("setting 2")));
+
+                if(!usrPref.isEmpty()){
+                    System.out.println("The settings have been successfully loaded from file");//.rm  for debug
+                    //LOGGER.log(Level.INFO, "Preferences loaded from file:\n");
+                }
+            }
+            catch(Exception e){
+                //LOGGER.log(Level.SEVERE, "Error occurred loading preferences:\n" + e.getMessage() , e);
+            }
         }
 
         @Override
@@ -220,37 +242,36 @@ public class ProgGui extends JFrame implements ActionListener {
                 this.setVisible(false);
             }
             else if(e.getSource() == setting1_btn){
-                System.out.printf("Setting number 1 is : %s\n",setting1_btn.isSelected());
+                System.out.printf("Setting number 1 is : %s\n",setting1_btn.isSelected());//.rm
                 LoadSave.updatePref("setting 1",String.valueOf(setting1_btn.isSelected()));
             }
             else if(e.getSource() == setting2_btn){
-                System.out.printf("Setting number 2 is : %d\n",(int)setting2_btn.getValue());//.rm                      cannot create event listener for spinner obj
+                System.out.printf("Setting number 2 is : %d\n", (int )setting2_btn.getValue());//.rm                     the Jspinner obj does not make events. data updated on save. kept as a place holder.
             }
             else if(e.getSource() == setting3_btn){
-                System.out.printf("Setting number 3 is : %s\n",setting3_btn.isSelected());
+                System.out.printf("Setting number 3 is : %s\n",setting3_btn.isSelected());//.rm
                 LoadSave.updatePref("setting 3",String.valueOf(setting3_btn.isSelected()));
             }
             else if(e.getSource() == setting4_btn){
-                System.out.printf("Setting number 4 is : %s\n",setting4_btn.isSelected());
+                System.out.printf("Setting number 4 is : %s\n",setting4_btn.isSelected());//.rm
                 LoadSave.updatePref("setting 4",String.valueOf(setting4_btn.isSelected()));
             }
             else if(e.getSource() == setting5_btn){
-                System.out.printf("Setting number 5 is : %s\n",setting5_btn.getSelectedItem());
-                LoadSave.updatePref("setting 5",String.valueOf(setting5_btn.getSelectedItem()));
+                //System.out.printf("Setting number 5 is : %s\n",setting5_btn.getSelectedItem());//.rm                  the event for JComboBox obj happens as soon as gui is displayed. data is passed to properties obj in  when save button is pressed
             }
             else if(e.getSource() == save_btn) {
                 try {
-                    JOptionPane.showConfirmDialog(this, "properties saving is not yet implemented", "Warning", JOptionPane.CLOSED_OPTION);
                     LoadSave.updatePref("setting 2",String.valueOf(setting2_btn.getValue()));
-                    if(LoadSave.savePref())
-                        JOptionPane.showConfirmDialog(null, "Save successful", "Your preferences have been saved", JOptionPane.OK_OPTION);      //.rm need better icon obj
+                    LoadSave.updatePref("setting 5",setting5_btn.getSelectedItem());
+                    if(LoadSave.savePref())                                                                                                         //.rmwhen this method is called it saves all the settings to a file
+                        JOptionPane.showConfirmDialog(null, "Save successful", "Your preferences have been saved", JOptionPane.CLOSED_OPTION);      //.rm need better icon obj
                     else
-                        JOptionPane.showMessageDialog(null, "Save unsuccessful", "An error has occurred. Your preferences have not been saved );", JOptionPane.OK_OPTION);
+                        JOptionPane.showConfirmDialog(null, "Save unsuccessful", "An error has occurred. Your preferences have not been saved );", JOptionPane.CLOSED_OPTION);
 
                 }
                 catch(Exception ex){
                     messageArea.append("WARNING: Error occurred saving to file: \n" + ex.getMessage());
-                    LOGGER.log(Level.SEVERE, "Error occurred writing to file:\n" + ex.getMessage() , ex);
+                    //LOGGER.log(Level.SEVERE, "Error occurred writing to file:\n" + ex.getMessage() , ex);
                 }
             }
         }

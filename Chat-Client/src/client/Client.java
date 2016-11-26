@@ -24,6 +24,9 @@ public class Client {
              Client client = new Client();
              client.run();
          }
+         catch (IOException e){
+             LOGGER.log(Level.SEVERE, "An unexpected fatal error occurred while running client: " + e.getMessage(), e);
+         }
          catch(Exception e){
              LOGGER.log(Level.SEVERE, "An unexpected fatal error occurred while running client: " + e.getMessage(), e);
          }
@@ -83,7 +86,9 @@ public class Client {
 
      //listening loop
          while (true) {
-             String line = in.readLine();
+             try {
+                 String line = in.readLine();
+
              if (line != null) {
                  if (line.startsWith("SUBMITNAME")) {
                      out.println(getName());
@@ -98,6 +103,10 @@ public class Client {
                  }
              }
          }
+             catch (Exception e){
+                 LOGGER.log(Level.SEVERE, e.getMessage(), e);
+             }
      }//end run
   }
+}
   
