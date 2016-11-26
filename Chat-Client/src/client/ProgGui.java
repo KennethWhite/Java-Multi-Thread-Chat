@@ -2,13 +2,8 @@ package client;
 
 
 import logging.SetupLogger;
-import sun.font.TrueTypeFont;
-
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
-import javax.xml.soap.Text;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -209,6 +204,12 @@ public class ProgGui extends JFrame implements ActionListener {
             this.add(setting5_btn);
             this.add(new JLabel());
             this.add(save_btn);
+
+            setSettings();
+        }
+
+        private void setSettings(){
+
         }
 
         @Override
@@ -220,32 +221,38 @@ public class ProgGui extends JFrame implements ActionListener {
             }
             else if(e.getSource() == setting1_btn){
                 System.out.printf("Setting number 1 is : %s\n",setting1_btn.isSelected());
+                LoadSave.updatePref("setting 1",String.valueOf(setting1_btn.isSelected()));
             }
             else if(e.getSource() == setting2_btn){
-                System.out.printf("Setting number 2 is : %d\n",(int)setting2_btn.getValue());                           //cannot create event listener for spinner obj
+                System.out.printf("Setting number 2 is : %d\n",(int)setting2_btn.getValue());//.rm                      cannot create event listener for spinner obj
             }
             else if(e.getSource() == setting3_btn){
                 System.out.printf("Setting number 3 is : %s\n",setting3_btn.isSelected());
+                LoadSave.updatePref("setting 3",String.valueOf(setting3_btn.isSelected()));
             }
             else if(e.getSource() == setting4_btn){
                 System.out.printf("Setting number 4 is : %s\n",setting4_btn.isSelected());
+                LoadSave.updatePref("setting 4",String.valueOf(setting4_btn.isSelected()));
             }
             else if(e.getSource() == setting5_btn){
                 System.out.printf("Setting number 5 is : %s\n",setting5_btn.getSelectedItem());
+                LoadSave.updatePref("setting 5",String.valueOf(setting5_btn.getSelectedItem()));
             }
             else if(e.getSource() == save_btn) {
                 try {
                     JOptionPane.showConfirmDialog(this, "properties saving is not yet implemented", "Warning", JOptionPane.CLOSED_OPTION);
+                    LoadSave.updatePref("setting 2",String.valueOf(setting2_btn.getValue()));
+                    if(LoadSave.savePref())
+                        JOptionPane.showConfirmDialog(null, "Save successful", "Your preferences have been saved", JOptionPane.OK_OPTION);      //.rm need better icon obj
+                    else
+                        JOptionPane.showMessageDialog(null, "Save unsuccessful", "An error has occurred. Your preferences have not been saved );", JOptionPane.OK_OPTION);
+
                 }
                 catch(Exception ex){
                     messageArea.append("WARNING: Error occurred saving to file: \n" + ex.getMessage());
                     LOGGER.log(Level.SEVERE, "Error occurred writing to file:\n" + ex.getMessage() , ex);
                 }
             }
-
-            //all saving to properties file here. save all changes when applied
-
-
         }
     }
 }

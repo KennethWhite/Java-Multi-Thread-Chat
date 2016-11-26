@@ -5,12 +5,14 @@ package client;
  import java.io.*;
  import java.net.*;
  import javax.swing.*;
+ import java.util.Properties;
  import java.util.logging.Level;
  import java.util.logging.Logger;
 
 
 //prompts user for ip address and port then attempts to connect
 public class Client {
+    private Properties settings;
     private BufferedReader in;
     private PrintWriter out;
     private ProgGui gui;
@@ -47,11 +49,11 @@ public class Client {
 
     private String getAddr(){
         try {
-            int reply = JOptionPane.showConfirmDialog(null, "Would you like to load a server?\n(No prompts for IP address)", "Load Server?", JOptionPane.YES_NO_OPTION);
+            int reply = JOptionPane.showConfirmDialog(null, "Would you like connect to this computer?\n(No prompts for IP address)", "Load Server?", JOptionPane.YES_NO_OPTION);
             String svr;
             if (reply == JOptionPane.YES_OPTION) {
                 System.out.println("Load server list");
-                svr = "localhost";                                                                                                      ///////change this address to the one you connect to often for testing so its easier to connect until server list is made\\\\\\\
+                svr = "localhost";                                                                                                      //.rm this will load a JPane containing all saved servers
             } else {
                 svr = getServerAddress();
             }
