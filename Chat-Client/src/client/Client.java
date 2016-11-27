@@ -6,6 +6,7 @@ package client;
  import java.net.*;
  import javax.swing.*;
  import java.util.Properties;
+ import java.util.logging.Handler;
  import java.util.logging.Level;
  import java.util.logging.Logger;
 
@@ -24,11 +25,19 @@ public class Client {
              Client client = new Client();
              client.run();
          }
-         catch (IOException e){
-             LOGGER.log(Level.SEVERE, "An unexpected fatal error occurred while running client: " + e.getMessage(), e);
+         catch (ConnectException e){
+             LOGGER.log(Level.SEVERE, "Server refused connection, or server is down: " + e.getMessage(), e);
+             //display message to client, call run again
          }
+
          catch(Exception e){
              LOGGER.log(Level.SEVERE, "An unexpected fatal error occurred while running client: " + e.getMessage(), e);
+         }
+         finally{
+             Handler[] handlers = LOGGER.getHandlers();
+             for(int i = 0; i < handlers.length; i++){
+                 handlers[i].close();
+             }
          }
      }
      
@@ -85,7 +94,8 @@ public class Client {
 
 
      //listening loop
-         while (true) {
+         boolean cont = true;
+         while (cont) {
              try {
                  String line = in.readLine();
 
@@ -99,10 +109,15 @@ public class Client {
                  } else if (line.startsWith("MESSAGE")) {
                      gui.getMessageArea().append(line.substring(8) + "\n");
                  } else if (line.startsWith(".*")) {
-                     gui.getMessageArea().append("Identify what to do with the data");                   //possibly sub ifs for separate games. each with a print writer passed.
+                     gui.getMessageArea().append("Identify what to do with the data");
                  }
              }
-         }
+             }//end try
+             catch(SocketException e){
+                 //will prevent endless loop if server goes downs
+                 LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                 cont = false;
+             }
              catch (Exception e){
                  LOGGER.log(Level.SEVERE, e.getMessage(), e);
              }
