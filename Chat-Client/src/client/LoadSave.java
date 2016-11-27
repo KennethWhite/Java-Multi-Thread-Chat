@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 public class LoadSave { //./rm maybe make non static so doesn't have to be public
     //.rm there could be different Properties objects for different applications like for games or server/client info
     private static Properties userPref = loadPref();
-    //private static final Logger LOGGER = SetupLogger.startLogger(Save.class.getName());       //.rm not used until start logger FNF error fixed
+    private static final Logger LOGGER = SetupLogger.startLogger(LoadSave.class.getName());       //.rm not used until start logger FNF error fixed
 
 //updates the properties obj
     public static boolean updatePref(Object obj, Object objData){
@@ -30,7 +30,7 @@ public class LoadSave { //./rm maybe make non static so doesn't have to be publi
             saveSuccessful = true;
         }
          catch(Exception e){
-             //LOGGER.log(Level.SEVERE, "An unexpected error occurred while saving to user preferences file: " + e.getMessage(), e);
+             LOGGER.log(Level.SEVERE, "An unexpected error occurred while saving to user preferences file: " + e.getMessage(), e);
              System.out.println("An unexpected error occurred while saving to user preferences file: " + e.getMessage());
              e.printStackTrace();//.rm
          }
@@ -46,7 +46,7 @@ public class LoadSave { //./rm maybe make non static so doesn't have to be publi
             fin.close();
         }
         catch (Exception e){
-            //LOGGER.log(Level.SEVERE, "An unexpected error occurred while loading from user preferences file: " + e.getMessage(), e);
+            LOGGER.log(Level.SEVERE, "An unexpected error occurred while loading from user preferences file: " + e.getMessage(), e);
             System.out.println("An unexpected error occurred while loading from user preferences file: " + e.getMessage());
             e.printStackTrace();//.rm
         }
@@ -65,7 +65,7 @@ public class LoadSave { //./rm maybe make non static so doesn't have to be publi
         }
 
         catch (Exception e) {
-            //LOGGER.log(Level.SEVERE, "An unexpected error occurred while retrieving user preferences file: " + e.getMessage(), e);
+            LOGGER.log(Level.SEVERE, "An unexpected error occurred while retrieving user preferences file: " + e.getMessage(), e);
             System.out.println("An unexpected error occurred while retrieving user preferences file: " + e.getMessage());
         }
 
