@@ -32,7 +32,7 @@ public class SFilter implements Filter {
         @Override
         public boolean isLoggable(LogRecord record) {
             if(record.getLevel().equals(this.level)){
-                //returns true if the level of the log equals level of filter
+                //returns true if the level is of the highest priority(SEVERE)
                 return true;
             }
             else {

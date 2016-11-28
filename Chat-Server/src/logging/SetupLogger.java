@@ -2,6 +2,8 @@ package logging;
 
 import server.Server;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.logging.Logger;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
@@ -26,11 +28,31 @@ public class SetupLogger {
                 throw new IllegalArgumentException("Parameter name null on call to startLogger!");
             }
 
+            File[] array = {
+                    new File("./out/LogFiles/ErrorLog.log"),
+                    new File("./out/LogFiles/Log.log"),
+                    new File("./out/LogFiles/Debug.log"),
+                    new File("./out/LogFiles/ErrorLog.log.lck"),
+                    new File("./out/LogFiles/Log.log.lck"),
+                    new File("./out/LogFiles/Debug.log.lck"),};
+
+
+            for (int i = 0; i < array.length; i++) {
+                try {
+                    if (array[i].createNewFile()) {
+                        System.out.println(array[i].getName() + " was created.");
+                    }
+                } catch (IOException ex) {
+                    System.out.println("Unexpected error initializing " + array[i].getName());
+                    System.out.println(ex.getMessage() + "\n");
+                    ex.printStackTrace();
+                }
+            }
 
             Logger ret = Logger.getLogger(name);
-            FileHandler errOut = new FileHandler("./out/LogFiles/ErrorLog.txt", true);
-            FileHandler genLog = new FileHandler("./out/LogFiles/Log.txt", true);
-            FileHandler debugLog = new FileHandler("./out/LogFiles/Debug.txt", true);
+            FileHandler errOut = new FileHandler("./out/LogFiles/ErrorLog.log", true);
+            FileHandler genLog = new FileHandler("./out/LogFiles/Log.log", true);
+            FileHandler debugLog = new FileHandler("./out/LogFiles/Debug.log", true);
 
 
             errOut.setFilter(new SFilter(Level.SEVERE));

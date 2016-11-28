@@ -1,133 +1,127 @@
 package client;
 
 //imports
- import java.awt.event.*;
- import java.awt.Dimension;
+ import logging.SetupLogger;
  import java.io.*;
  import java.net.*;
  import javax.swing.*;
-import java.text.SimpleDateFormat;
-import java.text.DateFormat;
-import java.util.Date;
+ import java.util.Properties;
+ import java.util.logging.Handler;
+ import java.util.logging.Level;
+ import java.util.logging.Logger;
 
-  
- //prompts user for ip address and port then attempts to connect
-  public class Client {
-     //obj vars
-     private BufferedReader in;
-     private PrintWriter out;
-     private JFrame frame = new JFrame("KDC chat");
-     private JButton saveConv = new JButton("Save Convo");//change***
-     private JTextField textField = new JTextField(40);
-     private JTextArea messageArea = new JTextArea(8, 40);
-  
+
+//prompts user for ip address and port then attempts to connect
+public class Client {
+    private Properties settings;
+    private BufferedReader in;
+    private PrintWriter out;
+    private ProgGui gui;
+    private static final Logger LOGGER = SetupLogger.startLogger(Client.class.getName());
+
      //initializes the client class
-     public static void main(String[] args) throws Exception {
-         Client client = new Client();
-         client.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-         client.frame.setVisible(true);
-         client.run();
-      }
+     public static void main(String[] args){
+         try {
+             Client client = new Client();
+             client.run();
+         }
+         catch (ConnectException e){
+             LOGGER.log(Level.SEVERE, "Server refused connection, or server is down: " + e.getMessage(), e);
+             //display message to client, call run again
+         }
+
+         catch(Exception e){
+             LOGGER.log(Level.SEVERE, "An unexpected fatal error occurred while running client: " + e.getMessage(), e);
+         }
+         finally{
+             Handler[] handlers = LOGGER.getHandlers();
+             for(int i = 0; i < handlers.length; i++){
+                 handlers[i].close();
+             }
+         }
+     }
      
 
 
 //the object Client.java
      private Client() {
- 
-         // Layout GUI
-         textField.setEditable(false);                                              //denies use of input box until name is verified
-         messageArea.setEditable(false);                                            //wont display messages till ^^
-         saveConv.setEnabled(false);//change***
-         saveConv.setSize(75,25);//changed***
-         frame.add(saveConv);//change***
-         frame.getContentPane().add(textField, "North");                            //adds input box to top of the frame
-         frame.getContentPane().add(new JScrollPane(messageArea), "Center");        //adds input box to center of the frame
-         frame.pack();                                                              //ensures the content fits in the frame
- 
-         // Add Listeners for keys press
-         textField.addActionListener(new ActionListener() {
-             public void actionPerformed(ActionEvent e) {   //for 'enter' key
-                 out.println(textField.getText());           //takes input sends to server
-                 textField.setText("");                      //clears txt box
-             }
-         });
-
-         //Wait for click to save
-         saveConv.addActionListener(new ActionListener() {//MESSY FIX UP***
-             public void actionPerformed(ActionEvent c) {
-                 String filePath = JOptionPane.showInputDialog("Enter file path");
-                 String fileName = JOptionPane.showInputDialog("Enter file name");
-                 try{
-                     filePath += "\\savedconvo";
-                     File file1 = new File(filePath);
-                     file1.mkdirs();
-                     File file2 = new File(file1, fileName);
-                     if(!file2.exists()) {
-                         file2.createNewFile();
-                     }
-                     BufferedWriter temp = new BufferedWriter(new FileWriter(file2, true));
-                     DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-                     String convo = getConvo();
-                     temp.write("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n" +
-                                convo + "\n\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<" + (dateFormat.format(new Date())));
-                     temp.close();//append or overwrite???
-                 }catch(Exception e){
-                     //TODO
-                 }
-             }
-         });
 
      }
 
-     private String getConvo(){
-
-         String temp;
-
-         temp = messageArea.getText();
-
-         if(temp == null){
-             temp = "";
-         }
-
-         return temp;
-     }
  
 
 //Prompt for and return the address of the server before a user connects.
      private String getServerAddress() {
-         return JOptionPane.showInputDialog(frame, "Enter IP Address of the Server:", "Welcome to the Chatter", JOptionPane.QUESTION_MESSAGE);
+         return JOptionPane.showInputDialog(null, "Enter IP Address of the Server:", "Welcome to the Chatter", JOptionPane.QUESTION_MESSAGE);
      }
- 
 
-//takes input for a name when user first connects
      private String getName() {
-         return JOptionPane.showInputDialog(frame, "Choose a screen name:", "Screen name selection", JOptionPane.PLAIN_MESSAGE);
+         return JOptionPane.showInputDialog(null, "Choose a screen name:", "Screen name selection", JOptionPane.PLAIN_MESSAGE);
      }
+
+    private String getAddr(){
+        try {
+            int reply = JOptionPane.showConfirmDialog(null, "Would you like connect to this computer?\n(No prompts for IP address)", "Load Server?", JOptionPane.YES_NO_OPTION);
+            String svr;
+            if (reply == JOptionPane.YES_OPTION) {
+                System.out.println("Load server list");
+                svr = "localhost";                                                                                                      //.rm this will load a JPane containing all saved servers
+            } else {
+                svr = getServerAddress();
+            }
+            return svr;
+        }
+        catch(Exception ex){
+            LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return null;
+    }
+
+    private String loadSvrList(){
+        //create pane with scroll box to load recent/saved servers. return server selected
+        return null;
+    }
  
- //Main looped used to update client from server and vise versa
+     //Main looped used to update client from server and vise versa
      private void run() throws IOException {
  
          // Make connection and initialize streams
-         String serverAddress = getServerAddress();
-         Socket socket = new Socket(serverAddress, 9001);           //creates socket connection to server
+         String serverAddress = getAddr();
+         Socket socket = new Socket(serverAddress, 9001);                               //creates socket connection to server
          in = new BufferedReader(new InputStreamReader(socket.getInputStream()));       //buffered reader to recieve from server
          out = new PrintWriter(socket.getOutputStream(), true);                         //printwriter to write to server
 
-    //listening loop
-         while (true) {
-             String line = in.readLine();
-             if (line.startsWith("SUBMITNAME")) {
-                 out.println(getName());
-             } else if (line.startsWith("NAMEACCEPTED")) {
-                 textField.setEditable(true);
-                 saveConv.setEnabled(true);//change***
-             } else if (line.startsWith("MESSAGE")) {
-                 messageArea.append(line.substring(8) + "\n");
+
+
+     //listening loop
+         boolean cont = true;
+         while (cont) {
+             try {
+                 String line = in.readLine();
+
+             if (line != null) {
+                 if (line.startsWith("SUBMITNAME")) {
+                     out.println(getName());
+                 } else if (line.startsWith("NAMEACCEPTED")) {
+                     gui = new ProgGui();                                       //waits till fully connected to server before loading gui
+                     gui.getTextField().setEditable(true);
+                     gui.setOut(out);
+                 } else if (line.startsWith("MESSAGE")) {
+                     gui.getMessageArea().append(line.substring(8) + "\n");
+                 } else if (line.startsWith(".*")) {
+                     gui.getMessageArea().append("Identify what to do with the data");
+                 }
              }
-
-         }
-     }
- 
-
+             }//end try
+             catch(SocketException e){
+                 //will prevent endless loop if server goes downs
+                 LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                 cont = false;
+             }
+             catch (Exception e){
+                 LOGGER.log(Level.SEVERE, e.getMessage(), e);
+             }
+     }//end run
   }
+}
   
