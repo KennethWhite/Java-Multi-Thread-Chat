@@ -118,12 +118,18 @@ public class Server {
                 if (out != null) {
                     writers.remove(out);
                 }
+
                 try {
                     socket.close();
+                    java.util.logging.Handler[] handlers = LOGGER.getHandlers();
+                    for(int i = 0; i < handlers.length; i++){
+                        handlers[i].close();
+                    }
                 } catch (IOException e) {
                     LOGGER.log(Level.SEVERE, "ERROR IN FINALLY BLOCK:\n " + e.getMessage() +
                             "\nList of clients: \n{1}", new Object[]{e, names});
                 }
+
             }
         }//end run
 
