@@ -974,3 +974,29 @@
   <thread>14</thread>
   <message>Removing client: daric</message>
 </record>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2016-11-27T19:41:51</date>
+  <millis>1480304511161</millis>
+  <sequence>0</sequence>
+  <logger>server.Server$Handler</logger>
+  <level>INFO</level>
+  <class>server.Server$Handler</class>
+  <method>run</method>
+  <thread>12</thread>
+  <message>Added client to server: </message>
+  <param>daric</param>
+</record>
+<record>
+  <date>2016-11-27T19:41:56</date>
+  <millis>1480304516643</millis>
+  <sequence>2</sequence>
+  <logger>server.Server$Handler</logger>
+  <level>INFO</level>
+  <class>server.Server$Handler</class>
+  <method>run</method>
+  <thread>12</thread>
+  <message>Removing client: daric</message>
+</record>
