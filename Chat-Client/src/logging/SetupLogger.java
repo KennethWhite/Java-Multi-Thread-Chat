@@ -2,7 +2,10 @@ package logging;
 
 
 import java.io.IOException;
+
 import java.util.logging.*;
+
+
 import java.io.File;
 
 
@@ -25,6 +28,7 @@ public class SetupLogger {
                 throw new IllegalArgumentException("Parameter name null on call to startLogger!");
             }
 
+
             File dir = new File("out/LogFiles");
             if(dir.mkdirs()){
                 System.out.println("Directory out/LogFiles was created.");
@@ -37,6 +41,7 @@ public class SetupLogger {
                     new File("./out/LogFiles/ErrorLog.log.lck"),
                     new File("./out/LogFiles/Log.log.lck"),
                     new File("./out/LogFiles/Debug.log.lck"),};
+
 
 
             for (int i = 0; i < array.length; i++) {

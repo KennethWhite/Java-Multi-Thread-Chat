@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.logging.*;
 
 
+
 public class SetupLogger {
     /*
     *
@@ -25,6 +26,7 @@ public class SetupLogger {
             if (name == null) {
                 throw new IllegalArgumentException("Parameter name null on call to startLogger!");
             }
+
 
             File dir = new File("out/LogFiles");
             if(dir.mkdirs()){
@@ -55,6 +57,8 @@ public class SetupLogger {
 
             Formatter format = new SimpleFormatter();//uses default format
             Logger ret = Logger.getLogger(name);
+dler debugLog = new FileHandler("./out/LogFiles/Debug.log", true);
+
 
             Handler[] handlers = ret.getHandlers();//removing default handlers
             for(Handler handler : handlers) {
