@@ -19,6 +19,10 @@ public class NullCommand implements Icommands{
         out.println("MESSAGE " +"Command not recognized: " + text);
         return null;
     }
+    @Override
+    public String help(){
+        return "/NullCommand is used behind the scenes to handle unknown commands.";
+    }
 
     public String getName(){
         return "NullCommand";
