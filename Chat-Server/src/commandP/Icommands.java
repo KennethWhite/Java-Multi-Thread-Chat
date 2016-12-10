@@ -6,4 +6,6 @@ public interface Icommands {
     public String perform();
 
     public String getName();
+
+    public String help();
 }

@@ -18,8 +18,15 @@ public class UpTime implements Icommands {
     public String perform(){
         long min = ((System.currentTimeMillis() - connTime) / 1000)/60;
         long sec = ((System.currentTimeMillis() - connTime) / 1000) - 60*min;
-        out.printf("MESSAGE Server has been running for %d minutes %d seconds\n", min,sec);
+        long hour = min / 60;
+        min = min %60;
+        out.printf("MESSAGE Server has been running for %d hours %d minutes %d seconds\n", hour, min, sec);
         return null;
+    }
+
+    @Override
+    public String help(){
+        return "/UpTime - Returns how long the server has been up for.";
     }
 
     public String getName(){
