@@ -18,6 +18,11 @@ public class DiceRoll implements Icommands{
         return "Rolling two dice: Roll is " + var1 + ".";
     }
 
+    @Override
+    public String help(){
+        return "/DiceRoll - Simulates rolling a pair of dice, returns a number between 2 and 12.";
+    }
+
     public String getName(){
         return "DiceRoll";
     }

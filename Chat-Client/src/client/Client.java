@@ -5,18 +5,26 @@ package client;
  import java.io.*;
  import java.net.*;
  import javax.swing.*;
+ import java.time.LocalDateTime;
+ import java.time.format.*;
+ import java.util.Calendar;
  import java.util.Properties;
  import java.util.logging.Handler;
  import java.util.logging.Level;
  import java.util.logging.Logger;
 
 
+
 //prompts user for ip address and port then attempts to connect
-public class Client {
+    public class Client {
     private Properties settings;
     private BufferedReader in;
     private PrintWriter out;
     private ProgGui gui;
+    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+    LocalDateTime time;
+
+
     private static final Logger LOGGER = SetupLogger.startLogger(Client.class.getName());
 
      //initializes the client class
@@ -64,7 +72,7 @@ public class Client {
             int reply = JOptionPane.showConfirmDialog(null, "Would you like connect to this computer?\n(No prompts for IP address)", "Load Server?", JOptionPane.YES_NO_OPTION);
             String svr;
             if (reply == JOptionPane.YES_OPTION) {
-                System.out.println("Load server list");
+                LOGGER.log(Level.INFO ,"Load server list");
                 svr = "localhost";                                                                                                      //.rm this will load a JPane containing all saved servers
             } else {
                 svr = getServerAddress();
@@ -98,6 +106,7 @@ public class Client {
          while (cont) {
              try {
                  String line = in.readLine();
+                 time = LocalDateTime.now();
 
              if (line != null) {
                  if (line.startsWith("SUBMITNAME")) {
@@ -107,14 +116,14 @@ public class Client {
                      gui.getTextField().setEditable(true);
                      gui.setOut(out);
                  } else if (line.startsWith("MESSAGE")) {
-                     gui.getMessageArea().append(line.substring(8) + "\n");
+                     gui.getMessageArea().append(dtf.format(time) + " : "  + line.substring(8) + "\n");
                  } else if (line.startsWith(".*")) {
                      gui.getMessageArea().append("Identify what to do with the data");
                  }
              }
              }//end try
              catch(SocketException e){
-                 //will prevent endless loop if server goes downs
+                 //will prevent endless loop if server goes down
                  LOGGER.log(Level.SEVERE, e.getMessage(), e);
                  cont = false;
              }

@@ -11,6 +11,11 @@ public class Roll implements Icommands{
         return "Rolling (0-99): " + var1 + ".";
     }
 
+    @Override
+    public String help(){
+        return "/Roll - Returns a number between 0 and 99";
+    }
+
     public String getName() {
         return "Roll";
     }

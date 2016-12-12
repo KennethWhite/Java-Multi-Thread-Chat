@@ -14,9 +14,16 @@ public class DateC implements Icommands {
     }
 
     public String perform(){
-        Date date = new Date();
-        out.println("MESSAGE " +date.toString());
+        if(out != null) {
+            Date date = new Date();
+            out.println("MESSAGE " + date.toString());
+            }
         return null;
+    }
+
+    @Override
+    public String help(){
+        return "/Date - Returns the current date and time of the server. (May vary from local time)";
     }
 
     public String getName(){

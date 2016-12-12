@@ -26,6 +26,8 @@ public class CommandFactory {
                           break;
             case "/date": temp = new DateC(out);
                           break;
+            case "/help": temp = new Help(out);
+                break;
             default: temp = new NullCommand(input, out);
         }
 

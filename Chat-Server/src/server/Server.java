@@ -86,6 +86,7 @@ public class Server {
 
 
                 out.println("NAMEACCEPTED");
+                out.println("MESSAGE Type /help for a list of server commands");
                 writers.add(out);                                                       //adds printwriter to ArrayList
 
 

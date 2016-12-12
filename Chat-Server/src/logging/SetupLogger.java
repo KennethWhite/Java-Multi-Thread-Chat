@@ -4,9 +4,8 @@ import server.Server;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Logger;
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
+import java.util.logging.*;
+
 
 
 public class SetupLogger {
@@ -24,8 +23,14 @@ public class SetupLogger {
 
     public static Logger startLogger(String name) {//starts a default logger for info, debug, error logs.
         try {
-            if(name == null){
+            if (name == null) {
                 throw new IllegalArgumentException("Parameter name null on call to startLogger!");
+            }
+
+
+            File dir = new File("out/LogFiles");
+            if(dir.mkdirs()){
+                System.out.println("Directory out/LogFiles was created.");
             }
 
             File[] array = {
@@ -49,24 +54,45 @@ public class SetupLogger {
                 }
             }
 
+
+            Formatter format = new SimpleFormatter();//uses default format
             Logger ret = Logger.getLogger(name);
-            FileHandler errOut = new FileHandler("./out/LogFiles/ErrorLog.log", true);
+dler debugLog = new FileHandler("./out/LogFiles/Debug.log", true);
+
+
+            Handler[] handlers = ret.getHandlers();//removing default handlers
+            for(Handler handler : handlers) {
+                ret.removeHandler(handler);
+            }
+
+            //creates file/console handlers
+            FileHandler errOut = new FileHandler("./out/LogFiles/ErrorLog.log", true);//.rm here we should check if the file exists, if not make one
             FileHandler genLog = new FileHandler("./out/LogFiles/Log.log", true);
             FileHandler debugLog = new FileHandler("./out/LogFiles/Debug.log", true);
+            Handler consoleHandler = new ConsoleHandler();//logs all Level.INFO by default
 
-
+            //specifies the filter level for each file handle
             errOut.setFilter(new SFilter(Level.SEVERE));
             genLog.setFilter(new SFilter(Level.INFO));
             debugLog.setFilter(new SFilter(Level.FINER));
 
-            ret.addHandler(errOut);
-            ret.addHandler(genLog);
-            ret.addHandler(debugLog);
+            Handler handlerArray[] = new Handler[]{errOut, genLog, debugLog, consoleHandler};
+
+            //this disables parent handlers in the root logger, prevents writing to console twice when logging Level.INFO
+            // and higher levels
+            ret.setUseParentHandlers(false);
+
 
             return ret;
-        } catch (Exception ex) {
+        } catch (IOException ex) {
             System.out.println("Error creating log files");
-            System.out.println(ex.getMessage() +"\n"); ex.printStackTrace();
+            System.out.println(ex.getMessage() + "\n");
+            ex.printStackTrace();
+            return null;
+        } catch (Exception ex) {
+            System.out.println("Error setting up logger");
+            System.out.println(ex.getMessage() + "\n");
+            ex.printStackTrace();
             return null;
         }
     }

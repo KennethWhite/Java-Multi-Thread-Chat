@@ -16,6 +16,10 @@ public class CoinFlip implements Icommands {
         }
 
     }
+    @Override
+    public String help(){
+        return "/CoinFlip - Simulates flipping a coin, will return either heads or tails.";
+    }
 
     public String getName(){
 
