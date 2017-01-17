@@ -2,17 +2,26 @@ package client;
 
 
 import logging.SetupLogger;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.nio.file.Files;
 import java.text.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ProgGui extends JFrame implements ActionListener {
+
+    //added********************
+    private DataOutputStream dOut;
+    private OutputStream audioOut;
+
     private PrintWriter out;
     private static final Logger LOGGER = SetupLogger.startLogger(Client.class.getName());
 //panels
@@ -30,6 +39,10 @@ public class ProgGui extends JFrame implements ActionListener {
     private JButton saveConv_btn = new JButton("Save Conversation");
     private JButton settings_btn = new JButton("Setings");
 
+    //added**********************
+    private JButton recordVoice = new JButton("R"); //want image
+    private JButton sendVoice = new JButton("S");//want image
+
 
     //ctor
     public ProgGui() {
@@ -45,6 +58,10 @@ public class ProgGui extends JFrame implements ActionListener {
         main.setBorder(new EmptyBorder(3,3,3,3));
         buttons.setLayout(new BoxLayout(buttons, BoxLayout.LINE_AXIS));
 
+        //added******************
+        recordVoice.addActionListener(this);//assuming this works as a general template
+        sendVoice.addActionListener(this);//^^
+
         saveConv_btn.addActionListener(this);
         settings_btn.addActionListener(this);
         textField.addActionListener(this);
@@ -53,6 +70,13 @@ public class ProgGui extends JFrame implements ActionListener {
         buttons.add(Box.createRigidArea(new Dimension(50, 0)));//.rm
         buttons.add(saveConv_btn);
         buttons.add(Box.createRigidArea(new Dimension(5, 0)));
+
+        //added***************
+        buttons.add(recordVoice);
+        buttons.add(Box.createRigidArea(new Dimension(5, 0)));//assume this is correct
+        buttons.add(sendVoice);
+        buttons.add(Box.createRigidArea(new Dimension(5, 0)));//^^
+
         buttons.add(settings_btn);
         main.add(buttons);
         main.add(new JScrollPane(messageArea));
@@ -80,32 +104,76 @@ public class ProgGui extends JFrame implements ActionListener {
         else if (e.getSource() == saveConv_btn) {           //saves conversationto file
             saveConv();
         }
+        else if (e.getSource() == recordVoice)  {//added*******************
+            voiceLine();//??????? move ?????
+        }
+        else if (e.getSource() == sendVoice){//^^
+            sendLine();//?????? move????
+        }
     }//end actionListener
 
+//maybe move to LoadSave class*******************************
+    private void sendLine(){
 
+        File audioFile = new File("RecentAudio.wav");
+
+
+        try {
+            FileInputStream fin = new FileInputStream(audioFile);
+            OutputStream os = audioOut;
+            byte buffer[] = new byte[2048];//weird array thing*
+            int count;
+            while((count = fin.read(buffer)) != -1){
+                os.write(buffer, 0, count);
+            }
+        }
+        catch(Exception e){
+            //TODO
+        }
+
+    }//end sendLine
+
+
+//maybe move to LoadSave class**********************************************
+    private void voiceLine() {
+
+        final Record line = new Record();
+        Thread stopper = new Thread(new Runnable() {
+            public void run() {
+                try {
+                    Thread.sleep(5000);//change time if needed
+                } catch (InterruptedException ie) {
+                    //TODO
+                }
+                line.stopRec();
+            }
+        });
+        stopper.start();
+        line.startRec();
+
+    }
 
 
 //maybe move to LoadSave class
     private void saveConv(){
-        String filePath = JOptionPane.showInputDialog("Enter folder name");
         String fileName = JOptionPane.showInputDialog("Enter file name");
-        try {
-            File file1 = new File("SavedConversations\\" + filePath);                                       //made it save to central folder
-            file1.mkdirs();
-            File file2 = new File(file1, fileName+".txt");;
-            if (!file2.exists()) {
-                file2.createNewFile();
+        if(fileName != null && !fileName.equals("")) {
+            try {
+                File file1 = new File("SavedConversations\\");                                       //made it save to central folder
+                file1.mkdirs();
+                File file2 = new File(file1, fileName + ".txt");
+                if (!file2.exists()) {
+                    file2.createNewFile();
+                }
+                BufferedWriter temp = new BufferedWriter(new FileWriter(file2, false));
+                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                String convo = getConvo();
+                temp.write("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n" +
+                            convo + "\n\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<" + (dateFormat.format(new Date())));
+                temp.close();
+            } catch (Exception ex) {
+                System.out.println("Error in save conversation Event Handler");
             }
-            BufferedWriter temp = new BufferedWriter(new FileWriter(file2, true));
-            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-            String convo = getConvo();
-            temp.write("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n" +
-                    convo + "\n\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<" + (dateFormat.format(new Date())));
-            temp.close();
-//append or overwrite???
-
-        } catch (Exception ex) {
-            System.out.println("Error in save conversation Event Handler");
         }
     }
 
@@ -139,6 +207,10 @@ public class ProgGui extends JFrame implements ActionListener {
     public void setOut(PrintWriter out) {
         this.out = out;
     }
+
+    public void setdOut(DataOutputStream dOut)  {this.dOut = dOut;}
+
+    public void setAudioOut(OutputStream audioOut){this.audioOut = audioOut;}
 
 
 
