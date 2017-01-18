@@ -37,7 +37,7 @@ public class ProgGui extends JFrame implements ActionListener {
 //buttons
     private JLabel Ideas = new JLabel("games tab?   Friends/groups tab?");//.rm
     private JButton saveConv_btn = new JButton("Save Conversation");
-    private JButton settings_btn = new JButton("Setings");
+    private JButton settings_btn = new JButton("Settings");
 
     //added**********************
     private JButton recordVoice = new JButton("R"); //want image

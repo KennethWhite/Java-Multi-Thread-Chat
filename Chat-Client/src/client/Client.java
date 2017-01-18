@@ -7,17 +7,23 @@ package client;
  import javax.sound.sampled.AudioFileFormat.Type;
  import javax.sound.sampled.*;
  import javax.swing.*;
+
  import javax.sound.sampled.AudioSystem;
+
+ import java.time.LocalDateTime;
+ import java.time.format.*;
+ import java.util.Calendar;
+
  import java.util.Properties;
  import java.util.logging.Handler;
  import java.util.logging.Level;
  import java.util.logging.Logger;
 
 
+
 //prompts user for ip address and port then attempts to connect
-public class Client {
 
-
+    public class Client {
 
     private Properties settings;
     private BufferedReader in;
@@ -25,6 +31,10 @@ public class Client {
     private OutputStream audioOut;
     private BufferedInputStream audioIn;
     private ProgGui gui;
+    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+    LocalDateTime time;
+
+
     private static final Logger LOGGER = SetupLogger.startLogger(Client.class.getName());
 
      //initializes the client class
@@ -72,7 +82,7 @@ public class Client {
             int reply = JOptionPane.showConfirmDialog(null, "Would you like connect to this computer?\n(No prompts for IP address)", "Load Server?", JOptionPane.YES_NO_OPTION);
             String svr;
             if (reply == JOptionPane.YES_OPTION) {
-                System.out.println("Load server list");
+                LOGGER.log(Level.INFO ,"Load server list");
                 svr = "localhost";                                                                                                      //.rm this will load a JPane containing all saved servers
             } else {
                 svr = getServerAddress();
@@ -134,6 +144,7 @@ public class Client {
          //listening loop
          boolean cont = true;
          while (cont) {
+
             try{
                 //for typing
                 String line = in.readLine();
