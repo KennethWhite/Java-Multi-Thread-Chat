@@ -1,12 +1,12 @@
 package logging;
 
-import server.Server;
+
+import java.io.IOException;
+
+import java.util.logging.*;
+
 
 import java.io.File;
-import java.io.IOException;
-import java.util.logging.Logger;
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
 
 
 public class SetupLogger {
@@ -24,8 +24,14 @@ public class SetupLogger {
 
     public static Logger startLogger(String name) {//starts a default logger for info, debug, error logs.
         try {
-            if(name == null){
+            if (name == null) {
                 throw new IllegalArgumentException("Parameter name null on call to startLogger!");
+            }
+
+
+            File dir = new File("out/LogFiles");
+            if(dir.mkdirs()){
+                System.out.println("Directory out/LogFiles was created.");
             }
 
             File[] array = {
@@ -35,6 +41,7 @@ public class SetupLogger {
                     new File("./out/LogFiles/ErrorLog.log.lck"),
                     new File("./out/LogFiles/Log.log.lck"),
                     new File("./out/LogFiles/Debug.log.lck"),};
+
 
 
             for (int i = 0; i < array.length; i++) {
@@ -49,24 +56,42 @@ public class SetupLogger {
                 }
             }
 
+
+            Formatter format = new SimpleFormatter();//uses default format
             Logger ret = Logger.getLogger(name);
-            FileHandler errOut = new FileHandler("./out/LogFiles/ErrorLog.log", true);
+
+            //this disables parent handlers in the root logger, prevents writing to console twice when logging Level.INFO
+            // and higher levels
+            ret.setUseParentHandlers(false);
+
+            //creates file/console handlers
+            FileHandler errOut = new FileHandler("./out/LogFiles/ErrorLog.log", true);//.rm here we should check if the file exists, if not make one
             FileHandler genLog = new FileHandler("./out/LogFiles/Log.log", true);
             FileHandler debugLog = new FileHandler("./out/LogFiles/Debug.log", true);
-
+            Handler consoleHandler = new ConsoleHandler();//logs all Level.INFO by default
 
             errOut.setFilter(new SFilter(Level.SEVERE));
             genLog.setFilter(new SFilter(Level.INFO));
             debugLog.setFilter(new SFilter(Level.FINER));
 
-            ret.addHandler(errOut);
-            ret.addHandler(genLog);
-            ret.addHandler(debugLog);
+            Handler handlerArray[] = new Handler[]{errOut, genLog, debugLog, consoleHandler};
+
+            for(int i = 0; i < handlerArray.length; i ++){
+                handlerArray[i].setFormatter(format);
+                ret.addHandler(handlerArray[i]);
+            }
+
 
             return ret;
-        } catch (Exception ex) {
+        } catch (IOException ex) {
             System.out.println("Error creating log files");
-            System.out.println(ex.getMessage() +"\n"); ex.printStackTrace();
+            System.out.println(ex.getMessage() + "\n");
+            ex.printStackTrace();
+            return null;
+        } catch (Exception ex) {
+            System.out.println("Error setting up logger");
+            System.out.println(ex.getMessage() + "\n");
+            ex.printStackTrace();
             return null;
         }
     }
@@ -75,16 +100,16 @@ public class SetupLogger {
     //eg creates a filehandler that writes to docs[0] in append[0] write mode and filters based on level at lvls[0];
     public static Logger startLogger(String name, String[] docs, Boolean[] append, Level[] lvls) {
         try {
-            if(name == null){
+            if (name == null) {
                 throw new IllegalArgumentException("Parameter name null on call to startLogger!");
             }
-            if(docs.length != append.length || docs.length != lvls.length || append.length != lvls.length){
-                throw new IllegalArgumentException("Length of parameter arrays do not match on call to startLogger()" );
+            if (docs.length != append.length || docs.length != lvls.length || append.length != lvls.length) {
+                throw new IllegalArgumentException("Length of parameter arrays do not match on call to startLogger()");
             }
 
             Logger ret = Logger.getLogger(name);
             FileHandler temp;
-            for(int i = 0; i < docs.length; i++){
+            for (int i = 0; i < docs.length; i++) {
                 temp = new FileHandler(docs[i], append[i]);
                 temp.setFilter(new SFilter(lvls[i]));
                 ret.addHandler(temp);
@@ -93,7 +118,8 @@ public class SetupLogger {
             return ret;
         } catch (Exception ex) {
             System.out.println("Error creating log files");
-            System.out.println(ex.getMessage() +"\n"); ex.printStackTrace();
+            System.out.println(ex.getMessage() + "\n");
+            ex.printStackTrace();
             return null;
         }
     }

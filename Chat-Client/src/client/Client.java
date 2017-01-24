@@ -4,19 +4,37 @@ package client;
  import logging.SetupLogger;
  import java.io.*;
  import java.net.*;
+ import javax.sound.sampled.AudioFileFormat.Type;
+ import javax.sound.sampled.*;
  import javax.swing.*;
+
+ import javax.sound.sampled.AudioSystem;
+
+ import java.time.LocalDateTime;
+ import java.time.format.*;
+ import java.util.Calendar;
+
  import java.util.Properties;
  import java.util.logging.Handler;
  import java.util.logging.Level;
  import java.util.logging.Logger;
 
 
+
 //prompts user for ip address and port then attempts to connect
-public class Client {
+
+    public class Client {
+
     private Properties settings;
     private BufferedReader in;
     private PrintWriter out;
+    private OutputStream audioOut;
+    private BufferedInputStream audioIn;
     private ProgGui gui;
+    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+    LocalDateTime time;
+
+
     private static final Logger LOGGER = SetupLogger.startLogger(Client.class.getName());
 
      //initializes the client class
@@ -64,7 +82,7 @@ public class Client {
             int reply = JOptionPane.showConfirmDialog(null, "Would you like connect to this computer?\n(No prompts for IP address)", "Load Server?", JOptionPane.YES_NO_OPTION);
             String svr;
             if (reply == JOptionPane.YES_OPTION) {
-                System.out.println("Load server list");
+                LOGGER.log(Level.INFO ,"Load server list");
                 svr = "localhost";                                                                                                      //.rm this will load a JPane containing all saved servers
             } else {
                 svr = getServerAddress();
@@ -87,41 +105,77 @@ public class Client {
  
          // Make connection and initialize streams
          String serverAddress = getAddr();
-         Socket socket = new Socket(serverAddress, 9001);                               //creates socket connection to server
-         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));       //buffered reader to recieve from server
-         out = new PrintWriter(socket.getOutputStream(), true);                         //printwriter to write to server
+         Socket typeS = new Socket(serverAddress, 9001);//creates socket connection to server...for text
+         Socket audioS = new Socket(serverAddress, 9002);//creates another socket connection to server..for audio
+         in = new BufferedReader(new InputStreamReader(typeS.getInputStream()));       //buffered reader to recieve from serverfor text
+         out = new PrintWriter(typeS.getOutputStream(), true);                       //printwriter to write to server
+         audioIn = new BufferedInputStream(audioS.getInputStream());                //input stream to recieve from server for audio
+         audioOut = audioS.getOutputStream();                                       //output stream to send audio out
 
 
+        /*
+        creates a thread that contains code for a loop similar to what is found for 'text' that
+        is below this thread declaration
+        */
+         Thread audioT = new Thread(new Runnable() {
+             public void run(){
+                 boolean cont = true;
+                 while (cont) {
 
-     //listening loop
+                     //for sounds
+                     try {
+                         AudioInputStream ais = AudioSystem.getAudioInputStream(audioIn);   //waits here for audio input coming from server
+                         Clip clip = AudioSystem.getClip();
+                         clip.open(ais);
+                         clip.start();
+                         clip.drain();
+                     } catch(SocketException e){
+                         //will prevent endless loop if server goes downs
+                         LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                         cont = false;
+                     }
+                     catch (Exception e){
+                         LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                     }
+                 }//end while
+             }//end run
+         });//end audio thread
+
+         //listening loop
          boolean cont = true;
          while (cont) {
-             try {
-                 String line = in.readLine();
 
-             if (line != null) {
-                 if (line.startsWith("SUBMITNAME")) {
-                     out.println(getName());
-                 } else if (line.startsWith("NAMEACCEPTED")) {
-                     gui = new ProgGui();                                       //waits till fully connected to server before loading gui
-                     gui.getTextField().setEditable(true);
-                     gui.setOut(out);
-                 } else if (line.startsWith("MESSAGE")) {
-                     gui.getMessageArea().append(line.substring(8) + "\n");
-                 } else if (line.startsWith(".*")) {
-                     gui.getMessageArea().append("Identify what to do with the data");
+            try{
+                //for typing
+                String line = in.readLine();
+
+                 if (line != null) {
+                     if (line.startsWith("SUBMITNAME")) {
+                         out.println(getName());
+                     } else if (line.startsWith("NAMEACCEPTED")) {
+                        gui = new ProgGui();                                       //waits till fully connected to server before loading gui
+                        gui.getTextField().setEditable(true);
+                        gui.setOut(out);
+                        gui.setAudioOut(audioOut);
+                        audioT.start();        //this starts the above declared thread that listens for audio, after everything is in working order with GUI
+                    } else if (line.startsWith("MESSAGE")) {
+                        gui.getMessageArea().append(line.substring(8) + "\n");
+                    } else if (line.startsWith(".*")) {
+                        gui.getMessageArea().append("Identify what to do with the data");
+                    }
                  }
-             }
-             }//end try
-             catch(SocketException e){
-                 //will prevent endless loop if server goes downs
-                 LOGGER.log(Level.SEVERE, e.getMessage(), e);
-                 cont = false;
-             }
-             catch (Exception e){
-                 LOGGER.log(Level.SEVERE, e.getMessage(), e);
-             }
+            }//end try
+            catch(SocketException e){
+                //will prevent endless loop if server goes downs
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                cont = false;
+            }
+            catch (Exception e){
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            }
+
      }//end run
+
   }
 }
   
