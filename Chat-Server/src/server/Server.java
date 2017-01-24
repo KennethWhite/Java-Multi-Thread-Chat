@@ -130,9 +130,10 @@ public class Server {
                                 //??make the declaration outside the loop??
                                 InputStream iin = new BufferedInputStream(audioS.getInputStream());
                                 AudioInputStream ais = AudioSystem.getAudioInputStream(iin);    //waits on this line for incoming audio
-
+                                ais.mark(100000);
                                 for (OutputStream outs : audioWriters) {
-                                    AudioSystem.write(ais, Type.WAVE, outs);//do outstream instead of file!!!
+                                    AudioSystem.write(ais, Type.WAVE, outs);
+                                    ais.reset();
                                 }
                             } catch (Exception e) {
                                 //TODO
