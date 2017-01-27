@@ -4,7 +4,7 @@ package client;
  import logging.SetupLogger;
  import java.io.*;
  import java.net.*;
- import javax.sound.sampled.AudioFileFormat.Type;
+ import java.awt.*;
  import javax.sound.sampled.*;
  import javax.swing.*;
 
@@ -160,6 +160,7 @@ package client;
                         audioT.start();        //this starts the above declared thread that listens for audio, after everything is in working order with GUI
                     } else if (line.startsWith("MESSAGE")) {
                         gui.getMessageArea().append(line.substring(8) + "\n");
+                        Toolkit.getDefaultToolkit().beep();
                     } else if (line.startsWith(".*")) {
                         gui.getMessageArea().append("Identify what to do with the data");
                     }
