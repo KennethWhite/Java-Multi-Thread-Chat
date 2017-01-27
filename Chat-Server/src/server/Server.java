@@ -31,12 +31,17 @@ public class Server {
     //List of all outstreams related to audio for the clients
     private static ArrayList<OutputStream> audioWriters = new ArrayList<>();
 
+    private static final Logger LOGGER = SetupLogger.startLogger(Server.class.getName());
+
 
     public static void main(String[] args) throws Exception {
+
         System.out.println("The chat server is running.");
-        ServerSocket listener = new ServerSocket(PORT);//Socket listens on a port for text
-        ServerSocket listener2 = new ServerSocket(PORT2);//socket listens on port for audio
+        ServerSocket listener = null;
+        ServerSocket listener2 = null;
         try {
+            listener = new ServerSocket(PORT);//Socket listens on a port for text
+            listener2 = new ServerSocket(PORT2);//socket listens on port for audio
             while (true) {
 
                 Socket typeSocket = listener.accept();//accepts connection to 'text' port
@@ -45,8 +50,16 @@ public class Server {
                 new Thread(connectionHandler).start();
 
             }
-        } finally {
-            listener.close();
+        }
+            catch(Exception ex){
+                System.out.println("Error in main: "+ex.getMessage());
+                LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+            }
+         finally {
+            if(listener != null)
+                listener.close();
+            if(listener2 != null)
+                listener2.close();
         }
     }
 //change
@@ -66,7 +79,6 @@ public class Server {
         private OutputStream audioOut;
         private DataInputStream audioIn;
         //view logging.setupLogger for details
-        private static final Logger LOGGER = SetupLogger.startLogger(Handler.class.getName());
 
 
 
@@ -151,8 +163,8 @@ public class Server {
                     }
                 }
             } catch (IOException e) {
-                System.out.println(e);
-                LOGGER.log(Level.WARNING, e.getMessage(), e);
+                System.out.println(e );
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
             } finally {
                 // This client is going down!  Remove its name and its print
                 // writer from the sets, and close its socket.
