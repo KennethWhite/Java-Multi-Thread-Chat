@@ -4,7 +4,7 @@ package client;
  import logging.SetupLogger;
  import java.io.*;
  import java.net.*;
- import javax.sound.sampled.AudioFileFormat.Type;
+ import java.awt.*;
  import javax.sound.sampled.*;
  import javax.swing.*;
 
@@ -33,7 +33,6 @@ package client;
     private ProgGui gui;
     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
     LocalDateTime time;
-
 
     private static final Logger LOGGER = SetupLogger.startLogger(Client.class.getName());
 
@@ -99,8 +98,12 @@ package client;
         //create pane with scroll box to load recent/saved servers. return server selected
         return null;
     }
- 
-     //Main looped used to update client from server and vise versa
+
+        public static Logger getLOGGER() {
+            return LOGGER;
+        }
+
+        //Main looped used to update client from server and vise versa
      private void run() throws IOException {
  
          // Make connection and initialize streams
@@ -130,7 +133,7 @@ package client;
                          clip.start();
                          clip.drain();
                      } catch(SocketException e){
-                         //will prevent endless loop if server goes downs
+                         //will prevent endless loop if server goes down
                          LOGGER.log(Level.SEVERE, e.getMessage(), e);
                          cont = false;
                      }
@@ -160,6 +163,7 @@ package client;
                         audioT.start();        //this starts the above declared thread that listens for audio, after everything is in working order with GUI
                     } else if (line.startsWith("MESSAGE")) {
                         gui.getMessageArea().append(line.substring(8) + "\n");
+                        AudioEffects.play("boop.wav");
                     } else if (line.startsWith(".*")) {
                         gui.getMessageArea().append("Identify what to do with the data");
                     }
@@ -174,8 +178,9 @@ package client;
                 LOGGER.log(Level.SEVERE, e.getMessage(), e);
             }
 
+     }//end while
      }//end run
 
-  }
+
 }
   

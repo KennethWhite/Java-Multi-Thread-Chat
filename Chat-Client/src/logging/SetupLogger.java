@@ -47,7 +47,7 @@ public class SetupLogger {
             for (int i = 0; i < array.length; i++) {
                 try {
                     if (array[i].createNewFile()) {
-                        System.out.println(array[i].getName() + " was created.");
+                        //System.out.println(array[i].getName() + " was created.");
                     }
                 } catch (IOException ex) {
                     System.out.println("Unexpected error initializing " + array[i].getName());
