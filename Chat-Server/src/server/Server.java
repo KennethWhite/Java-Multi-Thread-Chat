@@ -130,13 +130,18 @@ public class Server {
                                 //??make the declaration outside the loop??
                                 InputStream iin = new BufferedInputStream(audioS.getInputStream());
                                 AudioInputStream ais = AudioSystem.getAudioInputStream(iin);    //waits on this line for incoming audio
-
+                                ais.mark(100000);
                                 for (OutputStream outs : audioWriters) {
-                                    AudioSystem.write(ais, Type.WAVE, outs);//do outstream instead of file!!!
+                                    AudioSystem.write(ais, Type.WAVE, outs);
+                                    ais.reset();
                                 }
                             } catch (Exception e) {
-                                //TODO
+                                //LOGGER.log(Level.SEVERE, e.getMessage(), e);TODO
                             }
+                            finally {
+                                //finalmethod TODO
+                            }
+
                         }
                     }//end run
                 });//end audioT thread
@@ -162,9 +167,16 @@ public class Server {
                         }
                     }
                 }
-            } catch (IOException e) {
+
+            }
+            catch(SocketException e){
+                System.out.println(e);
+                //explicitly handling socket exception w/o logging so that it no longer dominates error log
+            }
+            catch (IOException e) {
                 System.out.println(e );
                 LOGGER.log(Level.SEVERE, e.getMessage(), e);
+
             } finally {
                 // This client is going down!  Remove its name and its print
                 // writer from the sets, and close its socket.
