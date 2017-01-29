@@ -136,8 +136,12 @@ public class Server {
                                     ais.reset();
                                 }
                             } catch (Exception e) {
-                                //TODO
+                                //LOGGER.log(Level.SEVERE, e.getMessage(), e);TODO
                             }
+                            finally {
+                                //finalmethod TODO
+                            }
+
                         }
                     }//end run
                 });//end audioT thread
