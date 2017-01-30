@@ -103,7 +103,7 @@ public class Server {
                     if (name == null) {
                         return;
                     }
-                    out.println("Added " + name + " to the chat.");
+
                     synchronized (names) {                                              //synchronized means no other changes can be made to 'names' while this thread is active
                         if (!names.contains(name)) {                                    //adds name to list if it doesnt already exist
                             names.add(name);
@@ -112,7 +112,9 @@ public class Server {
                         }
                     }
                 }
-
+                for(PrintWriter writer : writers){
+                    writer.println("MESSAGE SERVER: Added " + name + " to chat.");
+                }
                 out.println("NAMEACCEPTED");
                 out.println("MESSAGE Type /help for a list of server commands");
                 writers.add(out);                                                       //adds printwriter to ArrayList
@@ -182,10 +184,13 @@ public class Server {
                 // writer from the sets, and close its socket.
                 if (name != null) {
                     names.remove(name);
-                    out.println("Removing client: " + name);
+
                     LOGGER.log(Level.INFO, "Removing client: " + name);
                 }
                 if (out != null) {
+                    for(PrintWriter writer : writers){
+                        writer.println("MESSAGE SERVER: Removing client " + name + " from chat.");
+                    }
                     writers.remove(out);
                 }
 
