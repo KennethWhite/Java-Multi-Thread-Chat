@@ -13,11 +13,8 @@ public class LoadSave { //./rm maybe make non static so doesn't have to be publi
     private static final Logger LOGGER = SetupLogger.startLogger(LoadSave.class.getName());       //.rm not used until start logger FNF error fixed
 
 //updates the properties obj
-    public static boolean updatePref(Object obj, Object objData){
-        boolean isSuccessful = false;
+    public static void updatePref(Object obj, Object objData){
         userPref.put(obj,objData);
-        return isSuccessful;
-
     }
 
 //saves preferences to a file

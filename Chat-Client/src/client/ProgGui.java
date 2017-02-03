@@ -7,6 +7,7 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -34,6 +35,8 @@ public class ProgGui extends JFrame implements ActionListener {
     private JTextField textField = new JTextField();
     private JTextArea messageArea = new JTextArea(20,80);
 
+
+
 //buttons
     private JLabel Ideas = new JLabel("games tab?   Friends/groups tab?");//.rm
     private JButton saveConv_btn = new JButton("Save Conversation");
@@ -56,6 +59,8 @@ public class ProgGui extends JFrame implements ActionListener {
         messageArea.setLineWrap(true);
         main.setLayout(new BoxLayout(main, BoxLayout.PAGE_AXIS));
         main.setBorder(new EmptyBorder(3,3,3,3));
+        DefaultCaret caret = (DefaultCaret)messageArea.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
         buttons.setLayout(new BoxLayout(buttons, BoxLayout.LINE_AXIS));
 
         //added******************
@@ -298,11 +303,11 @@ public class ProgGui extends JFrame implements ActionListener {
 
                 if(!usrPref.isEmpty()){
                     System.out.println("The settings have been successfully loaded from file");//.rm  for debug
-                    //LOGGER.log(Level.INFO, "Preferences loaded from file:\n");
+                    LOGGER.log(Level.INFO, "Preferences loaded from file:\n");
                 }
             }
             catch(Exception e){
-                //LOGGER.log(Level.SEVERE, "Error occurred loading preferences:\n" + e.getMessage() , e);
+                LOGGER.log(Level.SEVERE, "Error occurred loading preferences:\n" + e.getMessage() , e);
             }
         }
 
@@ -343,7 +348,7 @@ public class ProgGui extends JFrame implements ActionListener {
                 }
                 catch(Exception ex){
                     messageArea.append("WARNING: Error occurred saving to file: \n" + ex.getMessage());
-                    //LOGGER.log(Level.SEVERE, "Error occurred writing to file:\n" + ex.getMessage() , ex);
+                    LOGGER.log(Level.SEVERE, "Error occurred writing to file:\n" + ex.getMessage() , ex);
                 }
             }
         }

@@ -62,7 +62,7 @@ public class Server {
                 listener2.close();
         }
     }
-//change
+
 
     /**
      * A handler thread class.  Handlers are spawned from the listening
@@ -78,8 +78,6 @@ public class Server {
         private PrintWriter out;
         private OutputStream audioOut;
         private DataInputStream audioIn;
-        //view logging.setupLogger for details
-
 
 
 
@@ -109,10 +107,13 @@ public class Server {
                                 LOGGER.log(Level.INFO, "Added client to server: " + name);   //logs each client to file
                                 notaccepted = false;
                             }
+
                         }
                     }
                 }
-
+                for(PrintWriter writer : writers){
+                    writer.println("MESSAGE SERVER: Added " + name + " to chat.");
+                }
                 out.println("NAMEACCEPTED");
                 out.println("MESSAGE Type /help for a list of server commands");
                 writers.add(out);                                                       //adds printwriter to ArrayList
@@ -156,10 +157,6 @@ public class Server {
                     if (shouldParse(input)) {
                         input = parse(input);                                           //parses input for commands
                     }
-                    else if(isData(input)){
-                        out.println("MESSAGE Data received but invalid/no destination");          // pass data back to client
-                        input = null;
-                    }
                     if (input != null && !input.equals("")) {
                         System.out.println(name + ": " + input);
                         for (PrintWriter writer : writers) {
@@ -182,9 +179,13 @@ public class Server {
                 // writer from the sets, and close its socket.
                 if (name != null) {
                     names.remove(name);
+
                     LOGGER.log(Level.INFO, "Removing client: " + name);
                 }
                 if (out != null) {
+                    for(PrintWriter writer : writers){
+                        writer.println("MESSAGE SERVER: Removing client " + name + " from chat.");
+                    }
                     writers.remove(out);
                 }
 
@@ -221,12 +222,6 @@ public class Server {
 
         }
 
-        private static boolean isData(String s){                                                        //sometimes throws error. IDK why
-            if (!s.equals(null) && s.length() > 1 && s.substring(0, 2).equals(".*")) {
-                return true;
-            }
-                return false;
-        }
     }//end Handler
 
 }//end class
