@@ -23,7 +23,7 @@ public class Server {
     private static final int PORT2 = 9002;
 
     //arrayList of all the names in use
-    private static ArrayList<String> names = new ArrayList<>();
+    private static UsernameTrie names = new UsernameTrie();
 
     //List of all printwriters for the clients
     private static ArrayList<PrintWriter> writers = new ArrayList<PrintWriter>();
@@ -95,18 +95,19 @@ public class Server {
                 out = new PrintWriter(typeS.getOutputStream(), true);
                 audioIn = new DataInputStream(audioS.getInputStream());
                 audioOut = audioS.getOutputStream();
-                while (true) {
+                boolean notaccepted = true;
+                while (notaccepted) {
                     out.println("SUBMITNAME");//requests a name from the client
                     name = in.readLine();
-                    if (name == null) {
-                        return;
-                    }
+                    if (name != null && !name.equals("")) {
 
-                    synchronized (names) {                                              //synchronized means no other changes can be made to 'names' while this thread is active
-                        if (!names.contains(name)) {                                    //adds name to list if it doesnt already exist
-                                names.add(name);
-                            LOGGER.log(Level.INFO, "Added client to server: " + name);   //logs each client to file
-                            break;
+                        synchronized (names) {                                              //synchronized means no other changes can be made to 'names' while this thread is active
+                            if (!names.contains(name)) {                                    //adds name to list if it doesnt already exist
+                                names.insert(name);
+                                LOGGER.log(Level.INFO, "Added client to server: " + name);   //logs each client to file
+                                notaccepted = false;
+                            }
+
                         }
                     }
                 }
