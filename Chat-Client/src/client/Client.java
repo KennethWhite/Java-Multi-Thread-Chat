@@ -162,6 +162,7 @@ package client;
                 String line = in.readLine();
 
                  if (line != null) {
+
                      if (line.startsWith("SUBMITNAME")) {
                          out.println(getName());
                      } else if (line.startsWith("NAMEACCEPTED")) {
