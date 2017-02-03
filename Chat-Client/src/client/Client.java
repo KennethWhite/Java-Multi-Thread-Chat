@@ -1,6 +1,9 @@
 package client;
 
 //imports
+ import javafx.application.Application;
+ import javafx.scene.Scene;
+ import javafx.stage.Stage;
  import logging.SetupLogger;
  import java.io.*;
  import java.net.*;
@@ -23,51 +26,57 @@ package client;
 
 //prompts user for ip address and port then attempts to connect
 
-    public class Client {
+    public class Client extends Application{
 
-    private Properties settings;
-    private BufferedReader in;
-    private PrintWriter out;
-    private OutputStream audioOut;
-    private BufferedInputStream audioIn;
-    private ProgGui gui;
-    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
-    LocalDateTime time;
+        private Properties settings;
+        private BufferedReader in;
+        private PrintWriter out;
+        private OutputStream audioOut;
+        private BufferedInputStream audioIn;
+        private ProgGui gui;
+        private Stage window;
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+        LocalDateTime time;
 
-    private static final Logger LOGGER = SetupLogger.startLogger(Client.class.getName());
 
-     //initializes the client class
-     public static void main(String[] args){
-         try {
-             Client client = new Client();
-             client.run();
-         }
-         catch (ConnectException e){
-             LOGGER.log(Level.SEVERE, "Server refused connection, or server is down: " + e.getMessage(), e);
-             //display message to client, call run again
-         }
+         private static final Logger LOGGER = SetupLogger.startLogger(Client.class.getName());
 
-         catch(Exception e){
-             LOGGER.log(Level.SEVERE, "An unexpected fatal error occurred while running client: " + e.getMessage(), e);
-         }
-         finally{
-             Handler[] handlers = LOGGER.getHandlers();
-             for(int i = 0; i < handlers.length; i++){
-                 handlers[i].close();
+         //initializes the client class
+         public static void main(String[] args){
+             try {
+                 Client client = new Client();
+                 launch(args);
+                 client.run();
+             }
+             catch (ConnectException e){
+                 LOGGER.log(Level.SEVERE, "Server refused connection, or server is down: " + e.getMessage(), e);
+                 //display message to client, call run again
+             }
+
+             catch(Exception e){
+                 LOGGER.log(Level.SEVERE, "An unexpected fatal error occurred while running client: " + e.getMessage(), e);
+             }
+             finally{
+                 Handler[] handlers = LOGGER.getHandlers();
+                 for(int i = 0; i < handlers.length; i++){
+                     handlers[i].close();
+                 }
              }
          }
-     }
      
 
 
-//the object Client.java
-     private Client() {
+        @Override
+        public void start(Stage primaryStage) throws Exception {
+            this.window = primaryStage;
+            ServerScene server = new ServerScene(window);
+            //Scene serverScene = new Scene(ServerScene.ServerScene(),600,300);
+            //window.setScene(serverScene);
+            //window.show();
+        }
 
-     }
 
- 
-
-//Prompt for and return the address of the server before a user connects.
+        //Prompt for and return the address of the server before a user connects.
      private String getServerAddress() {
          return JOptionPane.showInputDialog(null, "Enter IP Address of the Server:", "Welcome to the Chatter", JOptionPane.QUESTION_MESSAGE);
      }
