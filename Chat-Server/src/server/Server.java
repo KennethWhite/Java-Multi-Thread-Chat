@@ -110,7 +110,9 @@ public class Server {
                         }
                     }
                 }
-
+                for(PrintWriter writer : writers){
+                    writer.println("MESSAGE SERVER: Added " + name + " to chat.");
+                }
                 out.println("NAMEACCEPTED");
                 out.println("MESSAGE Type /help for a list of server commands");
                 writers.add(out);                                                       //adds printwriter to ArrayList
@@ -176,9 +178,13 @@ public class Server {
                 // writer from the sets, and close its socket.
                 if (name != null) {
                     names.remove(name);
+
                     LOGGER.log(Level.INFO, "Removing client: " + name);
                 }
                 if (out != null) {
+                    for(PrintWriter writer : writers){
+                        writer.println("MESSAGE SERVER: Removing client " + name + " from chat.");
+                    }
                     writers.remove(out);
                 }
 
