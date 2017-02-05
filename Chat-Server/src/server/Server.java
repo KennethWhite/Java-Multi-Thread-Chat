@@ -51,11 +51,14 @@ public class Server {
 
             }
         }
-            catch(Exception ex){
-                System.out.println("Error in main: "+ex.getMessage());
-                LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
-            }
-         finally {
+        catch(java.net.BindException ex){
+            LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        catch(Exception ex){
+            System.out.println("Error in main: "+ex.getMessage());
+            LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        finally {
             if(listener != null)
                 listener.close();
             if(listener2 != null)
