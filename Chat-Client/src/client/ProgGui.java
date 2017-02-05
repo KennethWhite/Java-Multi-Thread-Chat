@@ -7,6 +7,7 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -34,6 +35,8 @@ public class ProgGui extends JFrame implements ActionListener {
     private JTextField textField = new JTextField();
     private JTextArea messageArea = new JTextArea(20,80);
 
+
+
 //buttons
     private JLabel Ideas = new JLabel("games tab?   Friends/groups tab?");//.rm
     private JButton saveConv_btn = new JButton("Save Conversation");
@@ -56,6 +59,8 @@ public class ProgGui extends JFrame implements ActionListener {
         messageArea.setLineWrap(true);
         main.setLayout(new BoxLayout(main, BoxLayout.PAGE_AXIS));
         main.setBorder(new EmptyBorder(3,3,3,3));
+        DefaultCaret caret = (DefaultCaret)messageArea.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
         buttons.setLayout(new BoxLayout(buttons, BoxLayout.LINE_AXIS));
 
         //added******************
@@ -279,71 +284,72 @@ public class ProgGui extends JFrame implements ActionListener {
             loadSettings();
         }
 
-//applies saved values to buttons
-//applies saved values to buttons
+
 //applies saved values to buttons
         private void loadSettings(){
             try {
-                Properties usrPref = LoadSave.getPref();
+
+                LoadSaveObject loadingObj = new LoadSaveObject();
+                Properties usrSettings = loadingObj.getUserSettingsProperty();
+                if(usrSettings.isEmpty()){
+                    return;
+                }
             //for booleans
-                setting1_btn.setSelected(Boolean.valueOf(usrPref.getProperty("setting 1")));
-                setting3_btn.setSelected(Boolean.valueOf(usrPref.getProperty("setting 3")));
-                setting4_btn.setSelected(Boolean.valueOf(usrPref.getProperty("setting 4")));
+                setting1_btn.setSelected(Boolean.valueOf(usrSettings.getProperty("setting 1")));
+                setting3_btn.setSelected(Boolean.valueOf(usrSettings.getProperty("setting 3")));
+                setting4_btn.setSelected(Boolean.valueOf(usrSettings.getProperty("setting 4")));
 
-            //for Strings
-                setting5_btn.setSelectedItem(usrPref.getProperty("setting 5"));
+                    //for Strings
+                    setting5_btn.setSelectedItem(usrSettings.getProperty("setting 5"));
 
-            //for ints
-                setting2_btn.setValue(Integer.parseInt(usrPref.getProperty("setting 2")));
+                    //for ints
+                    //setting2_btn.setValue(Integer.parseInt(usrSettings.getProperty("setting 2")));
 
-                if(!usrPref.isEmpty()){
-                    System.out.println("The settings have been successfully loaded from file");//.rm  for debug
-                    //LOGGER.log(Level.INFO, "Preferences loaded from file:\n");
+                    if(!usrSettings.isEmpty()){
+                    System.out.println("The user settings have been successfully loaded from file");//.rm  for debug
+                   // LOGGER.log(Level.CONFIG, "User settings were loaded from file:\n");
                 }
             }
             catch(Exception e){
-                //LOGGER.log(Level.SEVERE, "Error occurred loading preferences:\n" + e.getMessage() , e);
+                LOGGER.log(Level.SEVERE, "Error occurred loading preferences:\n" + e.getMessage() , e);
             }
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
+
+            LoadSaveObject settingsSave = new LoadSaveObject();
+
             if(e.getSource() == back_btn){
                 main.setVisible(true);
                 buttons.setVisible(true);
                 this.setVisible(false);
             }
             else if(e.getSource() == setting1_btn){
-                System.out.printf("Setting number 1 is : %s\n",setting1_btn.isSelected());//.rm
-                LoadSave.updatePref("setting 1",String.valueOf(setting1_btn.isSelected()));
-            }
-            else if(e.getSource() == setting2_btn){
-                System.out.printf("Setting number 2 is : %d\n", (int )setting2_btn.getValue());//.rm                     the Jspinner obj does not make events. data updated on save. kept as a place holder.
+                settingsSave.updateUserSettings("setting 1",String.valueOf(setting1_btn.isSelected()));
             }
             else if(e.getSource() == setting3_btn){
-                System.out.printf("Setting number 3 is : %s\n",setting3_btn.isSelected());//.rm
-                LoadSave.updatePref("setting 3",String.valueOf(setting3_btn.isSelected()));
+                settingsSave.updateUserSettings("setting 3",String.valueOf(setting3_btn.isSelected()));
             }
             else if(e.getSource() == setting4_btn){
-                System.out.printf("Setting number 4 is : %s\n",setting4_btn.isSelected());//.rm
-                LoadSave.updatePref("setting 4",String.valueOf(setting4_btn.isSelected()));
+                settingsSave.updateUserSettings("setting 4",String.valueOf(setting4_btn.isSelected()));
             }
             else if(e.getSource() == setting5_btn){
                 //System.out.printf("Setting number 5 is : %s\n",setting5_btn.getSelectedItem());//.rm                  the event for JComboBox obj happens as soon as gui is displayed. data is passed to properties obj in  when save button is pressed
             }
             else if(e.getSource() == save_btn) {
                 try {
-                    LoadSave.updatePref("setting 2",String.valueOf(setting2_btn.getValue()));
-                    LoadSave.updatePref("setting 5",setting5_btn.getSelectedItem());
-                    if(LoadSave.savePref())                                                                                                         //.rmwhen this method is called it saves all the settings to a file
+                    settingsSave.updateUserSettings("setting 2",String.valueOf(setting2_btn.getValue()));
+                    settingsSave.updateUserSettings("setting 5",setting5_btn.getSelectedItem());
+                    //if(settingsSave.saveSettings())                                                                                                         //.rmwhen this method is called it saves all the settings to a file
                         JOptionPane.showConfirmDialog(null, "Save successful", "Your preferences have been saved", JOptionPane.CLOSED_OPTION);      //.rm need better icon obj
-                    else
+                    //else
                         JOptionPane.showConfirmDialog(null, "Save unsuccessful", "An error has occurred. Your preferences have not been saved );", JOptionPane.CLOSED_OPTION);
 
                 }
                 catch(Exception ex){
                     messageArea.append("WARNING: Error occurred saving to file: \n" + ex.getMessage());
-                    //LOGGER.log(Level.SEVERE, "Error occurred writing to file:\n" + ex.getMessage() , ex);
+                    LOGGER.log(Level.SEVERE, "Error occurred writing to file:\n" + ex.getMessage() , ex);
                 }
             }
         }

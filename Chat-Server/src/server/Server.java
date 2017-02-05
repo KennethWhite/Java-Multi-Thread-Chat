@@ -23,7 +23,7 @@ public class Server {
     private static final int PORT2 = 9002;
 
     //arrayList of all the names in use
-    private static ArrayList<String> names = new ArrayList<>();
+    private static UsernameTrie names = new UsernameTrie();
 
     //List of all printwriters for the clients
     private static ArrayList<PrintWriter> writers = new ArrayList<PrintWriter>();
@@ -51,18 +51,21 @@ public class Server {
 
             }
         }
-            catch(Exception ex){
-                System.out.println("Error in main: "+ex.getMessage());
-                LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
-            }
-         finally {
+        catch(java.net.BindException ex){
+            LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        catch(Exception ex){
+            System.out.println("Error in main: "+ex.getMessage());
+            LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        finally {
             if(listener != null)
                 listener.close();
             if(listener2 != null)
                 listener2.close();
         }
     }
-//change
+
 
     /**
      * A handler thread class.  Handlers are spawned from the listening
@@ -78,8 +81,6 @@ public class Server {
         private PrintWriter out;
         private OutputStream audioOut;
         private DataInputStream audioIn;
-        //view logging.setupLogger for details
-
 
 
 
@@ -97,18 +98,19 @@ public class Server {
                 out = new PrintWriter(typeS.getOutputStream(), true);
                 audioIn = new DataInputStream(audioS.getInputStream());
                 audioOut = audioS.getOutputStream();
-                while (true) {
+                boolean notaccepted = true;
+                while (notaccepted) {
                     out.println("SUBMITNAME");//requests a name from the client
                     name = in.readLine();
-                    if (name == null) {
-                        return;
-                    }
+                    if (name != null && !name.equals("")) {
 
-                    synchronized (names) {                                              //synchronized means no other changes can be made to 'names' while this thread is active
-                        if (!names.contains(name)) {                                    //adds name to list if it doesnt already exist
-                            names.add(name);
-                            LOGGER.log(Level.INFO, "Added client to server: " + name);   //logs each client to file
-                            break;
+                        synchronized (names) {                                              //synchronized means no other changes can be made to 'names' while this thread is active
+                            if (!names.contains(name)) {                                    //adds name to list if it doesnt already exist
+                                names.insert(name);
+                                LOGGER.log(Level.INFO, "Added client to server: " + name);   //logs each client to file
+                                notaccepted = false;
+                            }
+
                         }
                     }
                 }
@@ -157,10 +159,6 @@ public class Server {
                     String input = in.readLine();
                     if (shouldParse(input)) {
                         input = parse(input);                                           //parses input for commands
-                    }
-                    else if(isData(input)){
-                        out.println("MESSAGE Data received but invalid/no destination");          // pass data back to client
-                        input = null;
                     }
                     if (input != null && !input.equals("")) {
                         System.out.println(name + ": " + input);
@@ -227,12 +225,6 @@ public class Server {
 
         }
 
-        private static boolean isData(String s){                                                        //sometimes throws error. IDK why
-            if (!s.equals(null) && s.length() > 1 && s.substring(0, 2).equals(".*")) {
-                return true;
-            }
-                return false;
-        }
     }//end Handler
 
 }//end class

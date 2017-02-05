@@ -14,7 +14,7 @@ import javax.sound.sampled.*;
 public class AudioEffects {
     static ArrayList sounds = loadAudio();
     private static boolean soundEnabled = true;//will be set true/false in gui
-    private static float masterGain = -35.0f; // Reduces volume by 35 decibels (note: decibels are logarithmic in scale)
+    private static float masterGain = -17.0f; // Reduces volume by 35 decibels (note: decibels are logarithmic in scale)
 
     public static void play(String name) {
         try {
