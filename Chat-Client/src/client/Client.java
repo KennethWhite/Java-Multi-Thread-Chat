@@ -171,6 +171,7 @@ package client;
                         gui.getMessageArea().append(line.substring(8) + "\n");
                         AudioEffects.play("boop.wav");
                     } else if (line.startsWith(".*")) {
+
                         gui.getMessageArea().append("Identify what to do with the data");
                     }
                  }
