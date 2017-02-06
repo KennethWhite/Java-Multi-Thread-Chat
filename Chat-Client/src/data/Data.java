@@ -17,11 +17,12 @@ public class Data {
             throw new NullPointerException("Socket or data null on call to sendData()");
         }
         try {
+            //opens an object output stream from passed in socket.
             ObjectOutputStream dataOut = new ObjectOutputStream(s.getOutputStream());
-            ObjectInputStream dataIn = new ObjectInputStream(new BufferedInputStream(s.getInputStream()));
 
             dataOut.writeObject(data);;
-            dataOut.flush();
+
+            dataOut.close();
             return true;
         }
         catch(IOException e){
