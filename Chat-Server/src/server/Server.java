@@ -99,7 +99,7 @@ public class Server {
                 while (notaccepted) {
                     out.println("SUBMITNAME");//requests a name from the client
                     name = in.readLine();
-                    if (name != null && !name.equals("")) {
+                    if (!name.equals("null") && !name.equals("")) {
 
                         synchronized (names) {                                              //synchronized means no other changes can be made to 'names' while this thread is active
                             if (!names.contains(name)) {                                    //adds name to list if it doesnt already exist

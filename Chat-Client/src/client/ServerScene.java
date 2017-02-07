@@ -75,7 +75,7 @@ public class ServerScene{
         Button connectBtn = new Button("connect");
         connectBtn.setOnAction(e -> {
             String usrname = usrNameInput.getText();
-            usrname = usrname.replace("\\s", "_");                                                                              //ensure no whitespace
+            usrname = usrname.replaceAll("\\s", "_");
             usrNameInput.clear();
             usrNameInput.setText(usrname);
             if(usrname.length()==0 || usrname.isEmpty()) {

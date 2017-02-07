@@ -148,6 +148,12 @@ package client;
                      }
                      catch (Exception e){
                          LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                         cont = false;
+                     }
+                     finally{
+                         for(Handler h: LOGGER.getHandlers()){
+                             h.close();
+                         }
                      }
                  }//end while
              }//end run
