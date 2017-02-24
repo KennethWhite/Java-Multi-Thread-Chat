@@ -2,13 +2,13 @@ package client;
 
 //imports
  import javafx.application.Application;
+ import javafx.fxml.FXMLLoader;
+ import javafx.scene.Parent;
  import javafx.scene.Scene;
- import javafx.scene.layout.BorderPane;
  import javafx.stage.Stage;
  import logging.SetupLogger;
  import java.io.*;
  import java.net.*;
- import java.awt.*;
  import javax.sound.sampled.*;
  import javax.swing.*;
 
@@ -16,7 +16,6 @@ package client;
 
  import java.time.LocalDateTime;
  import java.time.format.*;
- import java.util.Calendar;
 
  import java.util.Properties;
  import java.util.logging.Handler;
@@ -57,11 +56,15 @@ package client;
 
         @Override
         public void start(Stage primaryStage) throws Exception {
-            this.window = primaryStage;
-            BorderPane serverList = new ServerScene(primaryStage, client).getServerSceneLayout();
-            Scene serverScene = new Scene(serverList,600,300);
-            window.setScene(serverScene);
-            window.show();
+            Parent root = FXMLLoader.load(getClass().getResource("display/ServerScene.fxml"));                          //loads the server scene from fxml file
+            primaryStage.setTitle("Chat Client");
+            primaryStage.setScene(new Scene(root, 800, 400));
+            primaryStage.show();
+//            this.window = primaryStage;
+//            BorderPane serverList = new ServerScene(primaryStage, client).getServerSceneLayout();
+//            Scene serverScene = new Scene(serverList,600,300);
+//            window.setScene(serverScene);
+//            window.show();
         }
 
 
