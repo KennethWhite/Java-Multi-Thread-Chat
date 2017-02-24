@@ -3,6 +3,7 @@ package client;
 //imports
  import javafx.application.Application;
  import javafx.scene.Scene;
+ import javafx.scene.layout.BorderPane;
  import javafx.stage.Stage;
  import logging.SetupLogger;
  import java.io.*;
@@ -40,27 +41,15 @@ package client;
 
 
          private static final Logger LOGGER = SetupLogger.startLogger(Client.class.getName());
+        private static Client client = new Client();
 
          //initializes the client class
          public static void main(String[] args){
-             try {
-                 Client client = new Client();
                  launch(args);
-                 client.run();
-             }
-             catch (ConnectException e){
-                 LOGGER.log(Level.SEVERE, "Server refused connection, or server is down: " + e.getMessage(), e);
-                 //display message to client, call run again
-             }
 
-             catch(Exception e){
-                 LOGGER.log(Level.SEVERE, "An unexpected fatal error occurred while running client: " + e.getMessage(), e);
-             }
-             finally{
                  Handler[] handlers = LOGGER.getHandlers();
                  for(int i = 0; i < handlers.length; i++){
                      handlers[i].close();
-                 }
              }
          }
      
@@ -69,20 +58,15 @@ package client;
         @Override
         public void start(Stage primaryStage) throws Exception {
             this.window = primaryStage;
-            ServerScene server = new ServerScene(window);
-            //Scene serverScene = new Scene(ServerScene.ServerScene(),600,300);
-            //window.setScene(serverScene);
-            //window.show();
+            BorderPane serverList = new ServerScene(primaryStage, client).getServerSceneLayout();
+            Scene serverScene = new Scene(serverList,600,300);
+            window.setScene(serverScene);
+            window.show();
         }
 
 
-        //Prompt for and return the address of the server before a user connects.
-     private String getServerAddress() {
-         return JOptionPane.showInputDialog(null, "Enter IP Address of the Server:", "Welcome to the Chatter", JOptionPane.QUESTION_MESSAGE);
-     }
-
      private String getName() {
-         return JOptionPane.showInputDialog(null, "Choose a screen name:", "Screen name selection", JOptionPane.PLAIN_MESSAGE);
+         return JOptionPane.showInputDialog(null, "Username is taken. Enter a new Username", "Screen name selection", JOptionPane.PLAIN_MESSAGE);
      }
 
     private String getAddr(){
@@ -90,10 +74,9 @@ package client;
             int reply = JOptionPane.showConfirmDialog(null, "Would you like connect to this computer?\n(No prompts for IP address)", "Load Server?", JOptionPane.YES_NO_OPTION);
             String svr;
             if (reply == JOptionPane.YES_OPTION) {
-                LOGGER.log(Level.INFO ,"Load server list");
                 svr = "localhost";                                                                                                      //.rm this will load a JPane containing all saved servers
             } else {
-                svr = getServerAddress();
+                svr = JOptionPane.showInputDialog(null, "Enter IP Address of the Server:", "Welcome to the Chatter", JOptionPane.QUESTION_MESSAGE);
             }
             return svr;
         }
@@ -103,27 +86,33 @@ package client;
         return null;
     }
 
-    private String loadSvrList(){
-        //create pane with scroll box to load recent/saved servers. return server selected
-        return null;
-    }
 
         public static Logger getLOGGER() {
             return LOGGER;
         }
 
-        //Main looped used to update client from server and vise versa
-     private void run() throws IOException {
- 
-         // Make connection and initialize streams
-         String serverAddress = getAddr();
-         Socket typeS = new Socket(serverAddress, 9001);//creates socket connection to server...for text
-         Socket audioS = new Socket(serverAddress, 9002);//creates another socket connection to server..for audio
-         in = new BufferedReader(new InputStreamReader(typeS.getInputStream()));       //buffered reader to recieve from serverfor text
-         out = new PrintWriter(typeS.getOutputStream(), true);                       //printwriter to write to server
-         audioIn = new BufferedInputStream(audioS.getInputStream());                //input stream to recieve from server for audio
-         audioOut = audioS.getOutputStream();                                       //output stream to send audio out
+        public boolean connect(String serverAddress){
+            Socket typeS = null;//creates socket connection to server...for text
+            try {
+                typeS = new Socket(serverAddress, 9001);
+                Socket audioS = new Socket(serverAddress, 9002);//creates another socket connection to server..for audio
+                in = new BufferedReader(new InputStreamReader(typeS.getInputStream()));       //buffered reader to recieve from serverfor text
+                out = new PrintWriter(typeS.getOutputStream(), true);                       //printwriter to write to server
+                audioIn = new BufferedInputStream(audioS.getInputStream());                //input stream to recieve from server for audio
+                audioOut = audioS.getOutputStream();
+            }
+            catch (Exception e) {
+                System.out.println("Invalid server");
+                //e.printStackTrace();
+                return false;
+            }
 
+            return true;
+        }
+
+        //Main looped used to update client from server and vise versa
+     public void run(String username) throws IOException {
+         //output stream to send audio out
 
         /*
         creates a thread that contains code for a loop similar to what is found for 'text' that
@@ -155,6 +144,7 @@ package client;
 
          //listening loop
          boolean cont = true;
+         int namesFailed = 0;
          while (cont) {
 
             try{
@@ -164,7 +154,13 @@ package client;
                  if (line != null) {
 
                      if (line.startsWith("SUBMITNAME")) {
-                         out.println(getName());
+                         if(namesFailed < 1) {
+                             out.println(username);                                //a switch from fx to swing if the name entered in fx pane was already used
+                             namesFailed++;
+                         }
+                         else {
+                             out.println(getName());
+                         }
                      } else if (line.startsWith("NAMEACCEPTED")) {
                         gui = new ProgGui();                                       //waits till fully connected to server before loading gui
                         gui.getTextField().setEditable(true);
@@ -175,6 +171,7 @@ package client;
                         gui.getMessageArea().append(line.substring(8) + "\n");
                         AudioEffects.play("boop.wav");
                     } else if (line.startsWith(".*")) {
+
                         gui.getMessageArea().append("Identify what to do with the data");
                     }
                  }
