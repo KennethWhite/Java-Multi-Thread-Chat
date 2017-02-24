@@ -22,6 +22,9 @@ public class Server {
     private static final int PORT = 9001;
     private static final int PORT2 = 9002;
 
+
+
+
     //arrayList of all the names in use
     private static UsernameTrie names = new UsernameTrie();
 
@@ -82,6 +85,8 @@ public class Server {
         private OutputStream audioOut;
         private DataInputStream audioIn;
 
+        ObjectOutputStream dataOut;
+        ObjectInputStream dataIn;
 
 
         public Handler(Socket typeS, Socket audioS) {
@@ -99,6 +104,10 @@ public class Server {
                 audioIn = new DataInputStream(audioS.getInputStream());
                 audioOut = audioS.getOutputStream();
                 boolean notaccepted = true;
+
+                ObjectOutputStream dataOut = new ObjectOutputStream(typeS.getOutputStream());
+                ObjectInputStream dataIn = new ObjectInputStream(new BufferedInputStream(typeS.getInputStream()));
+
                 while (notaccepted) {
                     out.println("SUBMITNAME");//requests a name from the client
                     name = in.readLine();
