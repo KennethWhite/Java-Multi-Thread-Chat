@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
@@ -11,11 +12,12 @@
          <right>
             <VBox alignment="CENTER" minWidth="-Infinity" prefHeight="200.0" prefWidth="200.0" spacing="30.0">
                <children>
-                  <TextField promptText="username">
+                  <TextField fx:id="userNameInput" promptText="username">
                      <VBox.margin>
                         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                      </VBox.margin>
                   </TextField>
+                  <Text fx:id="errorText" strokeType="OUTSIDE" strokeWidth="0.0" text=" " />
                   <Region prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
                   <Button fx:id="newBtn" alignment="CENTER" mnemonicParsing="false" onAction="#newBtnHandler" text="new" textAlignment="CENTER" />
                   <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#deleteBtnHandler" text="delete" />
@@ -31,7 +33,11 @@
             </VBox>
          </right>
          <center>
-            <TreeView prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+            <ListView fx:id="listView" editable="true" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </BorderPane.margin>
+            </ListView>
          </center>
       </BorderPane>
    </children>
