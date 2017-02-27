@@ -2,13 +2,14 @@ package client;
 
 //imports
  import javafx.application.Application;
+ import javafx.fxml.FXMLLoader;
+ import javafx.scene.Parent;
  import javafx.scene.Scene;
  import javafx.scene.layout.BorderPane;
  import javafx.stage.Stage;
  import logging.SetupLogger;
  import java.io.*;
  import java.net.*;
- import java.awt.*;
  import javax.sound.sampled.*;
  import javax.swing.*;
 
@@ -16,7 +17,6 @@ package client;
 
  import java.time.LocalDateTime;
  import java.time.format.*;
- import java.util.Calendar;
 
  import java.util.Properties;
  import java.util.logging.Handler;
@@ -29,77 +29,68 @@ package client;
 
     public class Client extends Application{
 
-        private Properties settings;
+        private static Client client;
+
+        public static Client getClient() {
+            return client;
+        }
+
+//initializes the program
+        public static void main(String[] args){
+                client = new Client();
+                launch(args);
+
+                Handler[] handlers = LOGGER.getHandlers();
+                for(int i = 0; i < handlers.length; i++){
+                    handlers[i].close();
+
+            }
+
+
+        }
+
         private BufferedReader in;
         private PrintWriter out;
         private OutputStream audioOut;
         private BufferedInputStream audioIn;
         private ProgGui gui;
         private Stage window;
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
-        LocalDateTime time;
-
-
-         private static final Logger LOGGER = SetupLogger.startLogger(Client.class.getName());
-        private static Client client = new Client();
-
-         //initializes the client class
-         public static void main(String[] args){
-                 launch(args);
-
-                 Handler[] handlers = LOGGER.getHandlers();
-                 for(int i = 0; i < handlers.length; i++){
-                     handlers[i].close();
-             }
-         }
-     
+        private static final Logger LOGGER = SetupLogger.startLogger(Client.class.getName());
+        private String userName = "";
 
 
         @Override
         public void start(Stage primaryStage) throws Exception {
-            this.window = primaryStage;
-            BorderPane serverList = new ServerScene(primaryStage, client).getServerSceneLayout();
-            Scene serverScene = new Scene(serverList,600,300);
-            window.setScene(serverScene);
-            window.show();
+            client.window = primaryStage;
+            Parent root = FXMLLoader.load(getClass().getResource("display/ServerScene.fxml"));                          //loads the server scene from fxml file
+            primaryStage.setTitle("Chat Client");
+            primaryStage.setScene(new Scene(root, 800, 400));
+            primaryStage.show();
+
+//            BorderPane serverList = new ServerScene(primaryStage, client).getServerSceneLayout();                     //commented section is original
+//            Scene serverScene = new Scene(serverList,600,300);
+//            primaryStage.setScene(serverScene);
+//            primaryStage.show();
         }
 
 
-     private String getName() {
-         return JOptionPane.showInputDialog(null, "Username is taken. Enter a new Username", "Screen name selection", JOptionPane.PLAIN_MESSAGE);
-     }
 
-    private String getAddr(){
-        try {
-            int reply = JOptionPane.showConfirmDialog(null, "Would you like connect to this computer?\n(No prompts for IP address)", "Load Server?", JOptionPane.YES_NO_OPTION);
-            String svr;
-            if (reply == JOptionPane.YES_OPTION) {
-                svr = "localhost";                                                                                                      //.rm this will load a JPane containing all saved servers
-            } else {
-                svr = JOptionPane.showInputDialog(null, "Enter IP Address of the Server:", "Welcome to the Chatter", JOptionPane.QUESTION_MESSAGE);
-            }
-            return svr;
-        }
-        catch(Exception ex){
-            LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
-        }
-        return null;
-    }
-
-
-        public static Logger getLOGGER() {
-            return LOGGER;
+//if the name is already used, reprompt
+        private String getName() {
+            return JOptionPane.showInputDialog(null, "Username is taken. Enter a new Username", "Screen name selection", JOptionPane.PLAIN_MESSAGE);
         }
 
+
+//used to connect client to server. returns if connection success
         public boolean connect(String serverAddress){
             Socket typeS = null;//creates socket connection to server...for text
             try {
                 typeS = new Socket(serverAddress, 9001);
                 Socket audioS = new Socket(serverAddress, 9002);//creates another socket connection to server..for audio
-                in = new BufferedReader(new InputStreamReader(typeS.getInputStream()));       //buffered reader to recieve from serverfor text
-                out = new PrintWriter(typeS.getOutputStream(), true);                       //printwriter to write to server
-                audioIn = new BufferedInputStream(audioS.getInputStream());                //input stream to recieve from server for audio
-                audioOut = audioS.getOutputStream();
+                this.in = new BufferedReader(new InputStreamReader(typeS.getInputStream()));       //buffered reader to recieve from serverfor text
+                this.out = new PrintWriter(typeS.getOutputStream(), true);                       //printwriter to write to server
+                this.audioIn = new BufferedInputStream(audioS.getInputStream());                //input stream to recieve from server for audio
+                this.audioOut = audioS.getOutputStream();
             }
             catch (Exception e) {
                 System.out.println("Invalid server");
@@ -110,8 +101,14 @@ package client;
             return true;
         }
 
-        //Main looped used to update client from server and vise versa
-     public void run(String username) throws IOException {
+
+//set clients name
+        public void setName(String newUsername){
+            userName = newUsername;
+        }
+
+//Main looped used to update client from server and vise versa
+     public void run() throws IOException {
          //output stream to send audio out
 
         /*
@@ -155,7 +152,7 @@ package client;
 
                      if (line.startsWith("SUBMITNAME")) {
                          if(namesFailed < 1) {
-                             out.println(username);                                //a switch from fx to swing if the name entered in fx pane was already used
+                             out.println(userName);                                //a switch from fx to swing if the name entered in fx pane was already used
                              namesFailed++;
                          }
                          else {

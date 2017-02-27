@@ -105,7 +105,7 @@ public class ServerScene extends BorderPane{
                    errorText.setText("The server connected");
                     try {
                         window.close();
-                        client.run(usrNameInput.getText());
+                        client.run();
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
