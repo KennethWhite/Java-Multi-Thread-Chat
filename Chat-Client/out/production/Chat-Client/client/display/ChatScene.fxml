@@ -9,24 +9,38 @@
    <children>
       <BorderPane layoutX="183.0" layoutY="117.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <bottom>
-            <TextField fx:id="inputField" BorderPane.alignment="CENTER" />
+            <HBox spacing="2.0">
+               <children>
+                  <TextField fx:id="inputField" BorderPane.alignment="CENTER" HBox.hgrow="ALWAYS" />
+                  <Button mnemonicParsing="false" onAction="#sendBtnHandler" text="Send" />
+               </children>
+               <BorderPane.margin>
+                  <Insets />
+               </BorderPane.margin>
+               <padding>
+                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+               </padding>
+            </HBox>
          </bottom>
          <center>
             <TextArea fx:id="messageArea" editable="false" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
          </center>
          <top>
-            <HBox BorderPane.alignment="CENTER">
+            <HBox style="-fx-background-color: #808080;" BorderPane.alignment="CENTER">
                <children>
                   <Region HBox.hgrow="ALWAYS" />
                   <Button mnemonicParsing="false" text="Settings">
                      <HBox.margin>
-                        <Insets bottom="5.0" left="50.0" right="5.0" top="5.0" />
+                        <Insets />
                      </HBox.margin>
                   </Button>
                </children>
                <BorderPane.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                  <Insets />
                </BorderPane.margin>
+               <padding>
+                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+               </padding>
             </HBox>
          </top>
       </BorderPane>

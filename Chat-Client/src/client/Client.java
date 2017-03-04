@@ -1,10 +1,18 @@
 package client;
 
 //imports
+ import client.display.ChatSceneController;
  import javafx.application.Application;
+ import javafx.application.Platform;
+ import javafx.beans.property.SimpleStringProperty;
+ import javafx.concurrent.Service;
+ import javafx.concurrent.Task;
+ import javafx.fxml.FXML;
  import javafx.fxml.FXMLLoader;
  import javafx.scene.Parent;
  import javafx.scene.Scene;
+ import javafx.scene.control.TextArea;
+ import javafx.scene.control.TextField;
  import javafx.scene.layout.BorderPane;
  import javafx.stage.Stage;
  import logging.SetupLogger;
@@ -19,6 +27,7 @@ package client;
  import java.time.format.*;
 
  import java.util.Properties;
+ import java.util.Scanner;
  import java.util.logging.Handler;
  import java.util.logging.Level;
  import java.util.logging.Logger;
@@ -67,17 +76,13 @@ package client;
             primaryStage.setScene(new Scene(root, 800, 400));
             primaryStage.show();
 
-//            BorderPane serverList = new ServerScene(primaryStage, client).getServerSceneLayout();                     //commented section is original
-//            Scene serverScene = new Scene(serverList,600,300);
-//            primaryStage.setScene(serverScene);
-//            primaryStage.show();
         }
 
 
 
 //if the name is already used, reprompt
         private String getName() {
-            return JOptionPane.showInputDialog(null, "Username is taken. Enter a new Username", "Screen name selection", JOptionPane.PLAIN_MESSAGE);
+            return JOptionPane.showInputDialog(null, "Username: \""  + userName +  "\" is taken.\nEnter a new Username", "Screen name selection", JOptionPane.PLAIN_MESSAGE);
         }
 
 
@@ -107,83 +112,93 @@ package client;
             userName = newUsername;
         }
 
-//Main looped used to update client from server and vise versa
-     public void run() throws IOException {
-         //output stream to send audio out
 
-        /*
-        creates a thread that contains code for a loop similar to what is found for 'text' that
-        is below this thread declaration
-        */
-         Thread audioT = new Thread(new Runnable() {
-             public void run(){
-                 boolean cont = true;
-                 while (cont) {
+        public void runChatService(TextField inputField, TextArea messgaeArea){                                     //this method creates and starts the service
+            Service chatService = new Service() {
+                @Override
+                protected Task createTask() {
+                    return new Task() {
+                        @Override
+                        protected Object call() throws Exception {
 
-                     //for sounds
-                     try {
-                         AudioInputStream ais = AudioSystem.getAudioInputStream(audioIn);   //waits here for audio input coming from server
-                         Clip clip = AudioSystem.getClip();
-                         clip.open(ais);
-                         clip.start();
-                         clip.drain();
-                     } catch(SocketException e){
-                         //will prevent endless loop if server goes down
-                         LOGGER.log(Level.SEVERE, e.getMessage(), e);
-                         cont = false;
-                     }
-                     catch (Exception e){
-                         LOGGER.log(Level.SEVERE, e.getMessage(), e);
-                     }
-                 }//end while
-             }//end run
-         });//end audio thread
+                            Thread audioT = new Thread(new Runnable() {
+                                public void run(){
+                                    boolean cont = true;
+                                    while (cont) {
 
-         //listening loop
-         boolean cont = true;
-         int namesFailed = 0;
-         while (cont) {
+                                        //for sounds
+                                        try {
+                                            AudioInputStream ais = AudioSystem.getAudioInputStream(audioIn);   //waits here for audio input coming from server
+                                            Clip clip = AudioSystem.getClip();
+                                            clip.open(ais);
+                                            clip.start();
+                                            clip.drain();
+                                        } catch(SocketException e){
+                                            //will prevent endless loop if server goes down
+                                            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                                            cont = false;
+                                        }
+                                        catch (Exception e){
+                                            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                                        }
+                                    }//end while
+                                }//end run
+                            });//end audio thread
 
-            try{
-                //for typing
-                String line = in.readLine();
+                            boolean cont = true;
+                            int namesFailed = 0;
+                            while (cont) {
 
-                 if (line != null) {
+                                try{
+                                    //for typing
+                                    String line = in.readLine();
 
-                     if (line.startsWith("SUBMITNAME")) {
-                         if(namesFailed < 1) {
-                             out.println(userName);                                //a switch from fx to swing if the name entered in fx pane was already used
-                             namesFailed++;
-                         }
-                         else {
-                             out.println(getName());
-                         }
-                     } else if (line.startsWith("NAMEACCEPTED")) {
-                        gui = new ProgGui();                                       //waits till fully connected to server before loading gui
-                        gui.getTextField().setEditable(true);
-                        gui.setOut(out);
-                        gui.setAudioOut(audioOut);
-                        audioT.start();        //this starts the above declared thread that listens for audio, after everything is in working order with GUI
-                    } else if (line.startsWith("MESSAGE")) {
-                        gui.getMessageArea().append(line.substring(8) + "\n");
-                        AudioEffects.play("boop.wav");
-                    } else if (line.startsWith(".*")) {
+                                    if (line != null) {
 
-                        gui.getMessageArea().append("Identify what to do with the data");
-                    }
-                 }
-            }//end try
-            catch(SocketException e){
-                //will prevent endless loop if server goes downs
-                LOGGER.log(Level.SEVERE, e.getMessage(), e);
-                cont = false;
-            }
-            catch (Exception e){
-                LOGGER.log(Level.SEVERE, e.getMessage(), e);
-            }
+                                        if (line.startsWith("SUBMITNAME")) {
+                                            if(namesFailed < 1) {
+                                                out.println(userName);                                //if the send useername to server, if bad prompt user
+                                                namesFailed++;
+                                            }
+                                            else {
+                                                out.println(getName());
+                                            }
+                                        } else if (line.startsWith("NAMEACCEPTED")) {
+//
+                                        } else if (line.startsWith("MESSAGE")) {
+                                            Platform.runLater(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    messgaeArea.appendText(line.substring(8) + "\n");
+                                                }
+                                            });
+                                            //gui.getMessageArea().append(line.substring(8) + "\n");
+                                            AudioEffects.play("boop.wav");
+                                        }
+                                    }
+                                }//end try
+                                catch(SocketException e){
+                                    //will prevent endless loop if server goes downs
+                                    LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                                    cont = false;
+                                }
+                                catch (Exception e){
+                                    LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                                }
 
-     }//end while
-     }//end run
+                            }//end while
+                            return null;
+                        }
+
+                    };
+                }
+            };
+            chatService.start();
+        }
+
+        public PrintWriter getPrintWriter(){
+            return this.out;
+        }
 
 
 }

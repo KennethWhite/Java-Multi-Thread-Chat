@@ -1,6 +1,8 @@
 package client.display;
 
+import client.Client;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -13,21 +15,27 @@ import java.util.ResourceBundle;
  */
 public class ChatSceneController implements Initializable{
 
+
     public TextField inputField;
     public TextArea messageArea;
+    public Button sendBtn;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        inputField.setOnAction(e -> {
-            if (e.getSource() == KeyCode.ENTER)  {
-                String text = inputField.getText();
-                System.out.println(text);
-                messageArea.appendText(text);
-                inputField.setText("");
-            }
-        });
+        Client.getClient().runChatService(inputField,messageArea);                                          //starts the client-server service
+
     }
+
+    public void sendBtnHandler(){                                                                           //when send button clicked
+        String text = inputField.getText();
+        System.out.println(text);
+        Client.getClient().getPrintWriter().println(text);
+        inputField.setText("");
+    }
+
+
+
 
 
 }
