@@ -3,8 +3,10 @@ package client.display;
 import client.Client;
 import client.LoadSaveObject;
 import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
@@ -20,7 +22,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 
-public class LoadServerController implements Initializable{
+public class ServerSceneController implements Initializable{
 
 
 //gui variables injected from fxml file.
@@ -148,8 +150,11 @@ public class LoadServerController implements Initializable{
                     else{
                         errorText.setText("Connected");
                         Stage mainStage = (Stage) errorText.getScene().getWindow();
-                        mainStage.close();
-                        client.run();
+                        Parent root = FXMLLoader.load(getClass().getResource("ChatScene.fxml"));
+                        mainStage.setScene(new Scene(root));
+                        mainStage.show();
+//                        mainStage.close();
+//                        client.run();
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
