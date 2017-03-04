@@ -20,7 +20,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 
-public class LoadServerController implements Initializable{
+public class ServerSceneController implements Initializable{
 
 
 //gui variables injected from fxml file.
