@@ -1,8 +1,7 @@
 package client.display;
 
 import client.Client;
-import client.LoadSaveObject;
-import javafx.application.Platform;
+import client.LoadSaveUtil;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -11,7 +10,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
@@ -19,8 +17,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.net.URL;
+import java.util.Properties;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
 
 public class ServerSceneController implements Initializable{
 
@@ -32,8 +30,8 @@ public class ServerSceneController implements Initializable{
 
     private Client client;
 
-//runs when gui is created. loads user info
-    @Override
+
+    @Override//runs when gui is created. loads user info
     public void initialize(URL location, ResourceBundle resources) {
         loadServerList();
         client = Client.getClient();
@@ -42,11 +40,13 @@ public class ServerSceneController implements Initializable{
 
 //load servers from file on startup
     private void loadServerList(){
-        LoadSaveObject loadServer = new LoadSaveObject();
-        userNameInput.setText(loadServer.getUserName());                        //loads username from file
+        Properties userPrefObj = LoadSaveUtil.getPropertyObject(LoadSaveUtil.userSettingFilename);
+        Properties savedServerObj = LoadSaveUtil.getPropertyObject(LoadSaveUtil.serverFilename);
+        userNameInput.setText(userPrefObj.getProperty("USERNAME"));
         listView.getItems().add("localhost");
-        listView.getItems().addAll(loadServer.getServers());
+        listView.getItems().addAll(savedServerObj.values());
     }
+
 
 
 //prompts user to enter new ip address in a separate window
@@ -74,11 +74,11 @@ public class ServerSceneController implements Initializable{
         Button okBtn = new Button("Accept");
         okBtn.setOnAction(e -> {
             String address = ip.getText();
-            if(address != null && !address.isEmpty() &&  address.length() > 3 && !address.equals(" ") && !address.equals("Invalid IP address")) {
-                LoadSaveObject saveServer = new LoadSaveObject();
-                saveServer.updateSavedServers(address , address);
-                listView.getItems().addAll(address);                         //will save the ip to the file and list will reload
-                saveServer.saveServerList();
+            if(address != null && !address.isEmpty() &&  address.length() > 3 && !address.equals(" ") && !address.equals("Invalid IP address")) {           //if meta-valid address update and save the saved server file using property obj
+                Properties savedServerObj = LoadSaveUtil.getPropertyObject(LoadSaveUtil.serverFilename);
+                savedServerObj.put(address , address);
+                listView.getItems().addAll(address);
+                LoadSaveUtil.savePropertyObject(savedServerObj, LoadSaveUtil.serverFilename);
                 stage.close();
             }
             else
@@ -99,67 +99,61 @@ public class ServerSceneController implements Initializable{
 
 
 
+
 //handles when the delete button is pressed
     public void deleteBtnHandler(){
-        LoadSaveObject savedServers = new LoadSaveObject();
-        String selected = (String) listView.getSelectionModel().getSelectedItem();
-        if(selected != null) {
-            if (!selected.equals("localhost")) {
-                if (!savedServers.removeServer(selected)) {
-                    errorText.setFill(Paint.valueOf("#ff0000"));
-                    errorText.setText("failed to remove " + selected);
-                } else {
-                    errorText.setFill(Paint.valueOf("#000000"));
-                    errorText.setText("Item was removed");
-                    savedServers.saveServerList();
-                }
-                listView.getItems().remove(selected);
-                savedServers.saveServerList();
-            } else {
-                errorText.setFill(Paint.valueOf("#ff0000"));
+        String selectedServer = (String) listView.getSelectionModel().getSelectedItem();
+        errorText.setFill(Paint.valueOf("#ff0000"));
+        if(selectedServer != null) {
+            if (selectedServer.equals("localhost")) {
                 errorText.setText("Cannot delete localhost");
+                return;
             }
+            listView.getItems().remove(selectedServer);
+            Properties savedServerObj = LoadSaveUtil.getPropertyObject(LoadSaveUtil.serverFilename);
+            savedServerObj.remove(selectedServer);
+            LoadSaveUtil.savePropertyObject(savedServerObj,LoadSaveUtil.serverFilename);
         }
-        else{
-            errorText.setFill(Paint.valueOf("#ff0000"));
+        else
             errorText.setText("You must select a server to delete");
-        }
+
+        errorText.setFill(Paint.valueOf("#000000"));
     }
+
 
 
 //handles when the user tries to connect
     public void connectBtnHandler(){
         String username = userNameInput.getText();
-        if(username == null)
-            username = "";
-        username = username.replaceAll("\\s", "_");                                    //ensure no whitespace
-        userNameInput.setText(username);
-        LoadSaveObject saveUsername = new LoadSaveObject();
-        saveUsername.setUserName(username);
-        client.setName(username);
 
-        if(username.length()==0 || username.isEmpty()) {
+        if(username == null || username.length()==0 || username.isEmpty()) {
+            errorText.setFill(Paint.valueOf("#ff0000"));
             errorText.setText("You must have a username");
         }
-        else if(listView.getSelectionModel().getSelectedItem() == null)
+        else if(listView.getSelectionModel().getSelectedItem() == null) {
+            errorText.setFill(Paint.valueOf("#ff0000"));
             errorText.setText("You must select a server");
-        else {
-                try {
-                    if(!client.connect(listView.getSelectionModel().getSelectedItem().toString()))                          //if the connection was successful close fx and start main loop
-                        errorText.setText("cannot connect");
-                    else{
-                        errorText.setText("Connected");
-                        Stage mainStage = (Stage) errorText.getScene().getWindow();
-                        Parent root = FXMLLoader.load(getClass().getResource("ChatScene.fxml"));
-                        mainStage.setScene(new Scene(root));
-                        mainStage.show();
-//                        mainStage.close();
-//                        client.run();
-                    }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
         }
+        else {
+            try {
+                client.setName(username);
+                if (client.connect(listView.getSelectionModel().getSelectedItem().toString()))      {                    //if the connection was successful close fx and start main service
+                    username = username.replaceAll("\\s", "_");                                    //ensure no whitespace\
+                    Properties userSettingsObj = LoadSaveUtil.getPropertyObject(LoadSaveUtil.userSettingFilename);
+                    userSettingsObj.put("USERNAME", username);
+                    Stage mainStage = (Stage) errorText.getScene().getWindow();
+                    Parent root = FXMLLoader.load(getClass().getResource("ChatScene.fxml"));                            //this line switches to the chat scene
+                    mainStage.setScene(new Scene(root));
+                    mainStage.show();
+            }
+            else
+                errorText.setText("cannot connect");
+        }
+            catch (Exception ex) {
+                ex.printStackTrace();
+            }
+    }
+        errorText.setFill(Paint.valueOf("#000000"));
     }
 
 

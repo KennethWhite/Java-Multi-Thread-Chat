@@ -12,7 +12,6 @@
             <HBox spacing="2.0">
                <children>
                   <TextField fx:id="inputField" BorderPane.alignment="CENTER" HBox.hgrow="ALWAYS" />
-                  <Button mnemonicParsing="false" onAction="#sendBtnHandler" text="Send" />
                </children>
                <BorderPane.margin>
                   <Insets />
