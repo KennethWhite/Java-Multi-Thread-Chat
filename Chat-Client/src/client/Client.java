@@ -1,82 +1,66 @@
 package client;
 
 //imports
- import client.display.ChatSceneController;
  import javafx.application.Application;
  import javafx.application.Platform;
- import javafx.beans.property.SimpleStringProperty;
  import javafx.concurrent.Service;
  import javafx.concurrent.Task;
- import javafx.fxml.FXML;
  import javafx.fxml.FXMLLoader;
  import javafx.scene.Parent;
  import javafx.scene.Scene;
  import javafx.scene.control.TextArea;
  import javafx.scene.control.TextField;
- import javafx.scene.layout.BorderPane;
  import javafx.stage.Stage;
  import logging.SetupLogger;
  import java.io.*;
  import java.net.*;
  import javax.sound.sampled.*;
  import javax.swing.*;
-
  import javax.sound.sampled.AudioSystem;
-
- import java.time.LocalDateTime;
- import java.time.format.*;
-
  import java.util.Properties;
- import java.util.Scanner;
  import java.util.logging.Handler;
  import java.util.logging.Level;
  import java.util.logging.Logger;
 
 
+public class Client extends Application{
 
-//prompts user for ip address and port then attempts to connect
-
-    public class Client extends Application{
-
-        private static Client client;
-
-        public static Client getClient() {
+    private static Client client;
+    public static Client getClient() {
             return client;
         }
 
-//initializes the program
-        public static void main(String[] args){
-                client = new Client();
-                launch(args);
+//main
+    public static void main(String[] args){
+        client = new Client();
+        launch(args);
 
-                Handler[] handlers = LOGGER.getHandlers();
-                for(int i = 0; i < handlers.length; i++){
-                    handlers[i].close();
-
-            }
-
-
+        Handler[] handlers = LOGGER.getHandlers();
+        for(int i = 0; i < handlers.length; i++){
+            handlers[i].close();
         }
 
-        private BufferedReader in;
-        private PrintWriter out;
-        private OutputStream audioOut;
-        private BufferedInputStream audioIn;
-        private ProgGui gui;
-        private Stage window;
-        private static final Logger LOGGER = SetupLogger.startLogger(Client.class.getName());
-        private String userName = "";
+    }//endMain
 
 
-        @Override
-        public void start(Stage primaryStage) throws Exception {
-            client.window = primaryStage;
-            Parent root = FXMLLoader.load(getClass().getResource("display/ServerScene.fxml"));                          //loads the server scene from fxml file
-            primaryStage.setTitle("Chat Client");
-            primaryStage.setScene(new Scene(root, 800, 400));
-            primaryStage.show();
+    private BufferedReader in;
+    private PrintWriter out;
+    private OutputStream audioOut;
+    private BufferedInputStream audioIn;
+    private Stage window;
+    private static final Logger LOGGER = SetupLogger.startLogger(Client.class.getName());
+    private String userName = "";
 
-        }
+
+//initializes java fx
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        client.window = primaryStage;
+        Parent root = FXMLLoader.load(getClass().getResource("display/ServerScene.fxml"));                          //loads the server scene from fxml file
+        primaryStage.setTitle("Chat Client");
+        primaryStage.setScene(new Scene(root, 800, 400));
+        primaryStage.show();
+    }
 
 
 
@@ -96,6 +80,25 @@ package client;
                 this.out = new PrintWriter(typeS.getOutputStream(), true);                       //printwriter to write to server
                 this.audioIn = new BufferedInputStream(audioS.getInputStream());                //input stream to recieve from server for audio
                 this.audioOut = audioS.getOutputStream();
+
+                in.readLine();
+                out.println(userName);
+
+                Task myTask = new Task() {  //this task ensure valid name
+                    @Override
+                    protected Object call() throws Exception {
+                        while(in.readLine().startsWith("SUBMITNAME")){
+                            userName = getName();
+                            out.println(userName);
+                        }
+                        Properties userPrefObj = LoadSaveUtil.getPropertyObject(LoadSaveUtil.userSettingFilename);
+                        userPrefObj.setProperty("USERNAME",userName);
+                        LoadSaveUtil.savePropertyObject(userPrefObj,LoadSaveUtil.userSettingFilename);
+                        return null;
+                    }
+                };
+                myTask.run();
+
             }
             catch (Exception e) {
                 System.out.println("Invalid server");
@@ -107,43 +110,14 @@ package client;
         }
 
 
-//set clients name
-        public void setName(String newUsername){
-            userName = newUsername;
-        }
 
-
-        public void runChatService(TextField inputField, TextArea messgaeArea){                                     //this method creates and starts the service
+        public void runChatService(TextArea messgaeArea){                                     //this method creates and starts the service
             Service chatService = new Service() {
                 @Override
                 protected Task createTask() {
                     return new Task() {
                         @Override
                         protected Object call() throws Exception {
-
-                            Thread audioT = new Thread(new Runnable() {
-                                public void run(){
-                                    boolean cont = true;
-                                    while (cont) {
-
-                                        //for sounds
-                                        try {
-                                            AudioInputStream ais = AudioSystem.getAudioInputStream(audioIn);   //waits here for audio input coming from server
-                                            Clip clip = AudioSystem.getClip();
-                                            clip.open(ais);
-                                            clip.start();
-                                            clip.drain();
-                                        } catch(SocketException e){
-                                            //will prevent endless loop if server goes down
-                                            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-                                            cont = false;
-                                        }
-                                        catch (Exception e){
-                                            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-                                        }
-                                    }//end while
-                                }//end run
-                            });//end audio thread
 
                             boolean cont = true;
                             int namesFailed = 0;
@@ -154,28 +128,16 @@ package client;
                                     String line = in.readLine();
 
                                     if (line != null) {
-
-                                        if (line.startsWith("SUBMITNAME")) {
-                                            if(namesFailed < 1) {
-                                                out.println(userName);                                //if the send useername to server, if bad prompt user
-                                                namesFailed++;
+                                        if (line.startsWith("MESSAGE")) {
+                                                Platform.runLater(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        messgaeArea.appendText(line.substring(8) + "\n");
+                                                    }
+                                                });
+                                                AudioEffects.play("boop.wav");
                                             }
-                                            else {
-                                                out.println(getName());
-                                            }
-                                        } else if (line.startsWith("NAMEACCEPTED")) {
-//
-                                        } else if (line.startsWith("MESSAGE")) {
-                                            Platform.runLater(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    messgaeArea.appendText(line.substring(8) + "\n");
-                                                }
-                                            });
-                                            //gui.getMessageArea().append(line.substring(8) + "\n");
-                                            AudioEffects.play("boop.wav");
                                         }
-                                    }
                                 }//end try
                                 catch(SocketException e){
                                     //will prevent endless loop if server goes downs
@@ -188,18 +150,132 @@ package client;
 
                             }//end while
                             return null;
-                        }
+                        }//end call
+                    };//end new task
+                }//end create task
+            };//end service
 
-                    };
-                }
-            };
+
             chatService.start();
         }
 
-        public PrintWriter getPrintWriter(){
-            return this.out;
-        }
 
+//creates and starts the service that sends and recieves audio
+    public void runAudioService(){
+        Service voiceService = new Service() {
+            @Override
+            protected Task createTask() {
+                return new Task() {
+                    @Override
+                    protected Object call() throws Exception {
+                        boolean cont = true;
+                        while (cont) {
+                            //for sounds
+                            try {
+                                AudioInputStream ais = AudioSystem.getAudioInputStream(audioIn);   //waits here for audio input coming from server
+                                Clip clip = AudioSystem.getClip();
+                                clip.open(ais);
+                                clip.start();
+                                clip.drain();
+                            } catch(SocketException e){
+                                //will prevent endless loop if server goes down
+                                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                                cont = false;
+                            }
+                            catch (Exception e){
+                                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                            }
+                        }//end while
+                       return null;
+                    }//end call
+                };//end new task
+            }//end create task
+        };//end new service
+
+
+        voiceService.start();
+    }
+
+
+
+
+//sends a string to the server
+    public void sendToServer(String strToSend){
+        out.println(strToSend);
+    }
+
+//set clients name
+    public void setName(String newUsername){
+        userName = newUsername;
+    }
+
+
+//audio recording methods that need to be implemented
+
+//    //maybe move to LoadSave class*******************************
+//    private void sendLine(){
+//
+//        File audioFile = new File("RecentAudio.wav");
+//
+//
+//        try {
+//            FileInputStream fin = new FileInputStream(audioFile);
+//            OutputStream os = audioOut;
+//            byte buffer[] = new byte[2048];//weird array thing*
+//            int count;
+//            while((count = fin.read(buffer)) != -1){
+//                os.write(buffer, 0, count);
+//            }
+//        }
+//        catch(Exception e){
+//            //TODO
+//        }
+//
+//    }//end sendLine
+//
+//
+//    //maybe move to LoadSave class**********************************************
+//    private void voiceLine() {
+//
+//        final Record line = new Record();
+//        Thread stopper = new Thread(new Runnable() {
+//            public void run() {
+//                try {
+//                    Thread.sleep(5000);//change time if needed
+//                } catch (InterruptedException ie) {
+//                    //TODO
+//                }
+//                line.stopRec();
+//            }
+//        });
+//        stopper.start();
+//        line.startRec();
+//
+//    }
+//
+//
+//    //maybe move to LoadSave class
+//    private void saveConv(){
+//        String fileName = JOptionPane.showInputDialog("Enter file name");
+//        if(fileName != null && !fileName.equals("")) {
+//            try {
+//                File file1 = new File("SavedConversations\\");                                       //made it save to central folder
+//                file1.mkdirs();
+//                File file2 = new File(file1, fileName + ".txt");
+//                if (!file2.exists()) {
+//                    file2.createNewFile();
+//                }
+//                BufferedWriter temp = new BufferedWriter(new FileWriter(file2, false));
+//                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+//                String convo = getConvo();
+//                temp.write("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n" +
+//                        convo + "\n\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<" + (dateFormat.format(new Date())));
+//                temp.close();
+//            } catch (Exception ex) {
+//                System.out.println("Error in save conversation Event Handler");
+//            }
+//        }
+//    }
 
 }
   
