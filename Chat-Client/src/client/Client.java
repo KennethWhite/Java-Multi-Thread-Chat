@@ -35,11 +35,6 @@ public class Client extends Application{
         client = new Client();
         launch(args);
 
-        Handler[] handlers = LOGGER.getHandlers();
-        for(int i = 0; i < handlers.length; i++){
-            handlers[i].close();
-        }
-
     }//endMain
 
 
@@ -55,11 +50,22 @@ public class Client extends Application{
 //initializes java fx
     @Override
     public void start(Stage primaryStage) throws Exception {
-        client.window = primaryStage;
+        this.window = primaryStage;
         Parent root = FXMLLoader.load(getClass().getResource("display/ServerScene.fxml"));                          //loads the server scene from fxml file
         primaryStage.setTitle("Chat Client");
         primaryStage.setScene(new Scene(root, 800, 400));
+        primaryStage.setOnCloseRequest(e -> closeClient());
         primaryStage.show();
+    }
+
+    private void closeClient(){
+
+        Handler[] handlers = LOGGER.getHandlers();
+        LOGGER.log(Level.INFO, "User Exit", handlers);
+        for(int i = 0; i < handlers.length; i++){
+            handlers[i].close();
+        }
+        this.window.close();
     }
 
 
@@ -105,7 +111,7 @@ public class Client extends Application{
                 //e.printStackTrace();
                 return false;
             }
-
+            LOGGER.log(Level.INFO, "Connected to server: " + serverAddress, serverAddress);
             return true;
         }
 

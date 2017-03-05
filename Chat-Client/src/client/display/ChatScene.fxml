@@ -28,7 +28,7 @@
             <HBox style="-fx-background-color: #808080;" BorderPane.alignment="CENTER">
                <children>
                   <Region HBox.hgrow="ALWAYS" />
-                  <Button mnemonicParsing="false" text="Settings">
+                  <Button disable="true" mnemonicParsing="false" text="Settings">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>

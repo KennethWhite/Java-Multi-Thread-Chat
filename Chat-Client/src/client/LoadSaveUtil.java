@@ -27,6 +27,7 @@ public class LoadSaveUtil {
         Properties savedProperty = new Properties();
         ;
         try {
+            
             FileInputStream fin = new FileInputStream(getFile(filename));
             savedProperty.load(fin);
             fin.close();
