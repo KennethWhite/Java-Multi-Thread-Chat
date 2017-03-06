@@ -88,14 +88,14 @@ public class ServerScene extends BorderPane{
         Button connectBtn = new Button("connect");                                     //connect button
         connectBtn.setOnAction(e -> {
             String usrname = usrNameInput.getText();
-<<<<<<< HEAD
-            usrname = usrname.replaceAll("\\s", "_");
-            usrNameInput.clear();
-=======
+
+            /*usrname = usrname.replaceAll("\\s", "_");
+            usrNameInput.clear();*/
+
             if(usrname == null)
                 usrname = "";
-            usrname = usrname.replaceAll("\\s", "_");                                    //ensure no whitespace
->>>>>>> refs/remotes/KennethWhite/master
+            usrname = usrname.replaceAll("\\s", "_");                                    //ensure no whitespac
+
             usrNameInput.setText(usrname);
             LoadSaveObject saveUsername = new LoadSaveObject();
             savedServers.setUserName(usrname);

@@ -18,6 +18,7 @@ import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.TreeSet;
 import java.util.logging.Level;
 
 public class LoadServerController implements Initializable{
@@ -37,7 +38,6 @@ public class LoadServerController implements Initializable{
         client = Client.getClient();
     }
 
-
 //load servers from file on startup
     private void loadServerList(){
         LoadSaveObject loadServer = new LoadSaveObject();
@@ -45,7 +45,6 @@ public class LoadServerController implements Initializable{
         listView.getItems().add("localhost");
         listView.getItems().addAll(loadServer.getServers());
     }
-
 
 //prompts user to enter new ip address in a separate window
     public void newBtnHandler(){

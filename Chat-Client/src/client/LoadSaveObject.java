@@ -80,7 +80,22 @@ public class LoadSaveObject {
         }
         return temp;
     }
-
+/*
+    public Properties loadSettings(){                                                                                   //loads Settings from file
+        Properties usrPref = new Properties();
+        try{
+            FileInputStream fin = new FileInputStream(getUserSettingsFile());
+            usrPref.load(fin);
+            fin.close();
+        }
+        catch (Exception e){
+            LOGGER.log(Level.SEVERE, "An unexpected error occurred while loading from user preferences file: " + e.getMessage(), e);
+            System.out.println("An unexpected error occurred while loading from user preferences file: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return usrPref;
+    }
+*/
 
 //loads servers from file and returns array list
     public ArrayList<String> getServers(){

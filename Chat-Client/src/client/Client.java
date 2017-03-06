@@ -44,7 +44,7 @@ package client;
                 for(int i = 0; i < handlers.length; i++){
                     handlers[i].close();
 
-            }
+                }
 
 
         }
