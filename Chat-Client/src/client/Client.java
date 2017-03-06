@@ -49,6 +49,7 @@ public class Client extends Application{
     private Stage window;
     private static final Logger LOGGER = SetupLogger.startLogger(Client.class.getName());
     private String userName = "";
+    private Record recording;
 
 
 
@@ -107,6 +108,7 @@ public class Client extends Application{
                 this.out = new PrintWriter(typeS.getOutputStream(), true);                       //printwriter to write to server
                 this.audioIn = new BufferedInputStream(audioS.getInputStream());                //input stream to recieve from server for audio
                 this.audioOut = audioS.getOutputStream();
+                this.recording = new Record();
 
                 in.readLine();
                 out.println(userName);
@@ -246,7 +248,7 @@ public class Client extends Application{
 
 
 //    //maybe move to LoadSave class*******************************
-    private void sendLine(){
+    private void sendLine(){    //TODO pass .wav file as param to send audio from diff files
 
         File audioFile = new File("RecentAudio.wav");
 
@@ -269,21 +271,12 @@ public class Client extends Application{
 
     //maybe move to LoadSave class**********************************************
     private void voiceLine() {
-
-        final Record line = new Record();
-        Thread stopper = new Thread(new Runnable() {
-            public void run() {
-                try {
-                    Thread.sleep(5000);//change time if needed
-                } catch (InterruptedException ie) {
-                    //TODO
-                }
-                line.stopRec();
-            }
-        });
-        stopper.start();
-        line.startRec();
-
+        if(recording.state()){
+            recording.startRec();
+        }
+        else{
+            //TODO notify state isnt good
+        }
     }
 
 
