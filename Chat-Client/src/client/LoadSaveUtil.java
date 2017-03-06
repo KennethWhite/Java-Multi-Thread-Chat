@@ -3,7 +3,6 @@ package client;
 /*
        The purpose of this class is load and save all data written to file
        if the file does not exist, it is created. if no data is in the file the value is retrieved as null
-       I am definitely going to improve this
  */
 
 import logging.SetupLogger;
@@ -22,7 +21,11 @@ public class LoadSaveUtil {
 
 
 
-//retrieves the property object associated with the file name
+    /**
+     * retrieves the property object associated with the file name. if it doesn't exist, create one
+     * @param filename  The filename to the file that the properties object is saved
+     * @return returns the Properties object in the file, or an empty one
+     */
     public static Properties getPropertyObject(String filename) {
         Properties savedProperty = new Properties();
         ;
@@ -38,7 +41,14 @@ public class LoadSaveUtil {
     }
 
 
-//saves the property object to the file
+
+
+    /**
+     * saves the properties object to the file
+     * @param objToSave the properties object to the file
+     * @param filename location to be saved
+     * @return save successful
+     */
     public static boolean savePropertyObject(Properties objToSave, String filename) {
         boolean saveSuccessful = false;
         try {
@@ -54,20 +64,26 @@ public class LoadSaveUtil {
 
 
 
-//creates or returns the file of the string passed
+
+
+    /**
+     * returns file of string passed in, if it doesn't exist it is created
+     * @param filename location of file
+     * @return file
+     */
     private static File getFile(String filename) {
         File dataDirectory = new File("Data");
-        File userData = new File(dataDirectory, filename);
+        File fileToRetrieve = new File(dataDirectory, filename);
         try {
-            if (!userData.exists()) {                                         //create new file if FNF
+            if (!fileToRetrieve.exists()) {                                         //create new file if FNF
                 dataDirectory.mkdir();
-                userData.createNewFile();
+                fileToRetrieve.createNewFile();
                 System.out.println("new " + filename + " created");
             }
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "An unexpected error occurred while retrieving " + filename +  " file: " + e.getMessage(), e);
         }
-        return userData;
+        return fileToRetrieve;
     }
 
 }

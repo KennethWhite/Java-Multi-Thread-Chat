@@ -25,9 +25,10 @@
             <TextArea fx:id="messageArea" editable="false" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
          </center>
          <top>
-            <HBox style="-fx-background-color: #808080;" BorderPane.alignment="CENTER">
+            <HBox spacing="10.0" style="-fx-background-color: #808080;" BorderPane.alignment="CENTER">
                <children>
                   <Region HBox.hgrow="ALWAYS" />
+                  <Button disable="true" mnemonicParsing="false" onAction="#sendAudioBtnHandler" text="Send Audio" />
                   <Button disable="true" mnemonicParsing="false" text="Settings">
                      <HBox.margin>
                         <Insets />
