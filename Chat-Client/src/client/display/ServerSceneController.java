@@ -146,8 +146,9 @@ public class ServerSceneController implements Initializable{
                     mainStage.setScene(new Scene(root));
                     mainStage.show();
             }
-            else
-                errorText.setText("cannot connect");
+            else {
+                    errorText.setText("cannot connect");
+                }
         }
             catch (Exception ex) {
                 ex.printStackTrace();
