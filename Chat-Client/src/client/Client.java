@@ -1,6 +1,7 @@
 package client;
 
 //imports
+ import client.display.ChatSceneController;
  import javafx.application.Application;
  import javafx.application.Platform;
  import javafx.concurrent.Service;
@@ -8,6 +9,7 @@ package client;
  import javafx.fxml.FXMLLoader;
  import javafx.scene.Parent;
  import javafx.scene.Scene;
+ import javafx.scene.control.Label;
  import javafx.scene.control.TextArea;
  import javafx.scene.control.TextField;
  import javafx.stage.Stage;
@@ -143,9 +145,9 @@ public class Client extends Application{
 
     /**
      * declares and runs the service that transfers text communication
-     * @param messgaeArea a reference to the gui text area so text can be appended
+     * @param messagearea a reference to the gui text area so text can be appended
      */
-        public void runChatService(TextArea messgaeArea){                                     //this method creates and starts the service
+        public void runChatService(TextArea messagearea){                                     //this method creates and starts the service
             Service chatService = new Service() {
                 @Override
                 protected Task createTask() {
@@ -165,7 +167,7 @@ public class Client extends Application{
                                         Platform.runLater(new Runnable() {
                                             @Override
                                             public void run() {
-                                                messgaeArea.appendText(line.substring(8) + "\n");
+                                                messagearea.appendText(line.substring(8) + "\n");
                                             }
                                         });
                                         AudioEffects.play("boop.wav");
@@ -248,7 +250,7 @@ public class Client extends Application{
 
 
 //    //maybe move to LoadSave class*******************************
-    public void sendLine(){    //TODO pass .wav file as param to send audio from diff files
+    public void sendLine(Object asker){    //TODO pass .wav file as param to send audio from diff files
 
         File audioFile = new File("RecentAudio.wav");
 
@@ -261,13 +263,14 @@ public class Client extends Application{
             while((count = fin.read(buffer)) != -1){
                 os.write(buffer, 0, count);
             }
+            ((ChatSceneController)asker).notifyClient("Send Successful");
         }
         catch(FileNotFoundException fnfe){
-            //TODO notify there was no file
+            ((ChatSceneController)asker).notifyClient("Audio File not found");
             LOGGER.log(Level.SEVERE, fnfe.getMessage(), fnfe);
         }
         catch(IOException ioe){
-            //TODO didnt send right
+            ((ChatSceneController)asker).notifyClient("Could not successfully send audio");
             LOGGER.log(Level.SEVERE, ioe.getMessage(), ioe);
         }
 
@@ -275,12 +278,12 @@ public class Client extends Application{
 
 
     //maybe move to LoadSave class**********************************************
-    public void voiceLine() {
+    public void voiceLine(Object asker) {
         if(recording.state()){
-            recording.startRec();
+            recording.startRec(asker);
         }
         else{
-            //TODO notify state isnt good
+            ((ChatSceneController)asker).notifyClient("Not in good state to record audio");
         }
     }
 
