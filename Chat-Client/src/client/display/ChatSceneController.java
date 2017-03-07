@@ -67,7 +67,7 @@ public class ChatSceneController implements Initializable{
      * records audio
      */
     public void recordBtnHandler(){
-
+        client.voiceLine();
     }
 
     /**
@@ -81,7 +81,7 @@ public class ChatSceneController implements Initializable{
      * sends the audio to server
      */
     public void sendBtnHandler(){
-
+        client.sendLine();
     }
 
 
