@@ -248,7 +248,7 @@ public class Client extends Application{
 
 
 //    //maybe move to LoadSave class*******************************
-    private void sendLine(){    //TODO pass .wav file as param to send audio from diff files
+    public void sendLine(){    //TODO pass .wav file as param to send audio from diff files
 
         File audioFile = new File("RecentAudio.wav");
 
@@ -256,21 +256,26 @@ public class Client extends Application{
         try {
             FileInputStream fin = new FileInputStream(audioFile);
             OutputStream os = audioOut;
-            byte buffer[] = new byte[2048];//weird array thing*
+            byte buffer[] = new byte[2048];
             int count;
             while((count = fin.read(buffer)) != -1){
                 os.write(buffer, 0, count);
             }
         }
-        catch(Exception e){
-            //TODO
+        catch(FileNotFoundException fnfe){
+            //TODO notify there was no file
+            LOGGER.log(Level.SEVERE, fnfe.getMessage(), fnfe);
+        }
+        catch(IOException ioe){
+            //TODO didnt send right
+            LOGGER.log(Level.SEVERE, ioe.getMessage(), ioe);
         }
 
     }//end sendLine
 
 
     //maybe move to LoadSave class**********************************************
-    private void voiceLine() {
+    public void voiceLine() {
         if(recording.state()){
             recording.startRec();
         }
