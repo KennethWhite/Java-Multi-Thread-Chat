@@ -1,5 +1,6 @@
 package client;
 
+import client.display.ChatSceneController;
 import logging.SetupLogger;
 import sun.rmi.runtime.Log;
 
@@ -50,20 +51,20 @@ public class Record {
         return this.isGoodState;
     }
 
-    public void startRec(){ //TODO make button stop rec or time
+    public void startRec(Object asker){ //TODO make button stop rec or time
         try {
 
             Thread stopper = new Thread(new Runnable() {
                 public void run() {
                     try {
                         Thread.sleep(5000);//change time if needed
-                        stopRec();
+                        stopRec(asker);
                     } catch (InterruptedException ie) {
                         Thread.currentThread().interrupt();
                         LOGGER.log(Level.SEVERE, ie.getMessage(), ie);
-                        //TODO notify was interrupted
+                        ((ChatSceneController)asker).notifyClient("Connection Interrupted, may not have gotten all audio ");
                         isGoodState = false;
-                        stopRec();
+                        stopRec(asker);
                     }
                 }
             });
@@ -76,23 +77,22 @@ public class Record {
             audioInStream = new AudioInputStream(mic);
 
             AudioSystem.write(audioInStream, type, wavFile);    //make output streams to everyone for live audio??
+            ((ChatSceneController)asker).notifyClient("Recording Successful");
         }
         catch(LineUnavailableException lue){
             format = new AudioFormat(8000.0f, 16, 1, true, true);
             LOGGER.log(Level.SEVERE, lue.getMessage(), lue);
-            //TODO notify couldnt record
+            ((ChatSceneController)asker).notifyClient("Unable to record");
             isGoodState = false;
         }
         catch(IOException ioe){
-
             LOGGER.log(Level.SEVERE, ioe.getMessage(), ioe);
-
-            //TODO notify didnt save/lost try again
+            ((ChatSceneController)asker).notifyClient("The audio was not saved correctly/lost");
             isGoodState = false;
         }
     }
 
-    public void stopRec(){
+    public void stopRec(Object asker){
         mic.stop();
         mic.flush();
         mic.close();
