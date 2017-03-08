@@ -13,6 +13,7 @@ public class Help implements Icommands {
         if(out == null){
             throw new IllegalArgumentException("Printwriter null on call to Help.perform()");
         }
+        //TODO change to a single write one object socket is set up
         out.println("MESSAGE " + "*** Commands are not case-sensitive (/rolldice and /RollDice are equivalent) ***");
         out.println("MESSAGE " + "\t" + new CoinFlip().help());
         out.println("MESSAGE " + "\t" + new DateC(null).help());

@@ -37,7 +37,6 @@ public class ServerSceneController implements Initializable{
         client = Client.getClient();
     }
 
-
 //load servers from file on startup
     private void loadServerList(){
         Properties userPrefObj = LoadSaveUtil.getPropertyObject(LoadSaveUtil.userSettingFilename);
@@ -46,8 +45,6 @@ public class ServerSceneController implements Initializable{
         listView.getItems().add("localhost");
         listView.getItems().addAll(savedServerObj.values());
     }
-
-
 
 //prompts user to enter new ip address in a separate window
     public void newBtnHandler(){

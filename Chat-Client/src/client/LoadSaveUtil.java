@@ -5,8 +5,6 @@ package client;
        if the file does not exist, it is created. if no data is in the file the value is retrieved as null
  */
 
-import logging.SetupLogger;
-
 import java.io.*;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -14,7 +12,7 @@ import java.util.logging.Logger;
 
 public class LoadSaveUtil {
 
-    private static Logger LOGGER = SetupLogger.startLogger(LoadSaveUtil.class.getName());
+    private static Logger LS_LOGGER = Logger.getLogger("client.Client.LS_LOGGER");
     //the strings are just used for reference
     public static String serverFilename = "savedServers.txt";
     public static String userSettingFilename = "userPref.txt";
@@ -34,8 +32,9 @@ public class LoadSaveUtil {
             FileInputStream fin = new FileInputStream(getFile(filename));
             savedProperty.load(fin);
             fin.close();
+            LS_LOGGER.log(Level.FINER, "Test logger");
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "An unexpected error occurred while retrieving " + filename +  " file property object: " + e.getMessage(), e);
+            LS_LOGGER.log(Level.SEVERE, "An unexpected error occurred while retrieving " + filename +  " file property object: " + e.getMessage(), e);
         }
         return savedProperty;
     }
@@ -57,7 +56,7 @@ public class LoadSaveUtil {
             fout.close();
             saveSuccessful = true;
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "An unexpected error occurred while saving " + filename +  " file property object: " + e.getMessage(), e);
+            LS_LOGGER.log(Level.SEVERE, "An unexpected error occurred while saving " + filename +  " file property object: " + e.getMessage(), e);
         }
         return saveSuccessful;
     }
@@ -81,7 +80,7 @@ public class LoadSaveUtil {
                 System.out.println("new " + filename + " created");
             }
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "An unexpected error occurred while retrieving " + filename +  " file: " + e.getMessage(), e);
+            LS_LOGGER.log(Level.SEVERE, "An unexpected error occurred while retrieving " + filename +  " file: " + e.getMessage(), e);
         }
         return fileToRetrieve;
     }

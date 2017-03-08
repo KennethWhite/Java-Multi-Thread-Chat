@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -25,6 +26,7 @@ public class ChatSceneController implements Initializable{
     public TextField inputField;
     public TextArea messageArea;
     public ProgressBar recordProgress;
+    public Label statusBar;
     private Client client;
 
     @Override
@@ -67,7 +69,7 @@ public class ChatSceneController implements Initializable{
      * records audio
      */
     public void recordBtnHandler(){
-
+        client.voiceLine(this);
     }
 
     /**
@@ -81,10 +83,12 @@ public class ChatSceneController implements Initializable{
      * sends the audio to server
      */
     public void sendBtnHandler(){
-
+        client.sendLine(this);
     }
 
-
+    public void notifyClient(String message){
+        this.statusBar.setText(message);
+    }
 
 
 }
