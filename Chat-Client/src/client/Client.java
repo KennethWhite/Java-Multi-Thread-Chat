@@ -1,6 +1,7 @@
 package client;
-//a change
+
 //imports
+ import client.display.ChatSceneController;
  import javafx.application.Application;
  import javafx.application.Platform;
  import javafx.concurrent.Service;
@@ -9,20 +10,16 @@ package client;
  import javafx.scene.Parent;
  import javafx.scene.Scene;
  import javafx.scene.control.TextArea;
- import javafx.scene.control.TextField;
  import javafx.stage.Stage;
- import logging.SetupLogger;
+ import logging.MyLogger;
+
  import java.io.*;
  import java.net.*;
  import javax.sound.sampled.*;
  import javax.swing.*;
  import javax.sound.sampled.AudioSystem;
- import java.text.DateFormat;
- import java.text.SimpleDateFormat;
  import java.util.Properties;
- import java.util.logging.Handler;
  import java.util.logging.Level;
- import java.util.logging.Logger;
 
 
 public class Client extends Application{
@@ -47,8 +44,8 @@ public class Client extends Application{
     private OutputStream audioOut;
     private BufferedInputStream audioIn;
     private Stage window;
-    private static final Logger LOGGER = SetupLogger.startLogger(Client.class.getName());
     private String userName = "";
+    private Record recording;
 
 
 
@@ -71,11 +68,7 @@ public class Client extends Application{
      * closes logger files when the user closes the fx window
      */
     private void closeClient(){
-        Handler[] handlers = LOGGER.getHandlers();
-        LOGGER.log(Level.INFO, "User Exit", handlers);
-        for(int i = 0; i < handlers.length; i++){
-            handlers[i].close();
-        }
+        MyLogger.closeLogger();//closes logger properly
         this.window.close();
     }
 
@@ -107,6 +100,7 @@ public class Client extends Application{
                 this.out = new PrintWriter(typeS.getOutputStream(), true);                       //printwriter to write to server
                 this.audioIn = new BufferedInputStream(audioS.getInputStream());                //input stream to recieve from server for audio
                 this.audioOut = audioS.getOutputStream();
+                this.recording = new Record();
 
                 in.readLine();
                 out.println(userName);
@@ -128,10 +122,11 @@ public class Client extends Application{
 
             }
             catch (Exception e) {
-                LOGGER.log(Level.INFO, "Failed to connect to server: " + serverAddress, serverAddress);
+                MyLogger.log(Level.INFO, "Failed to connect to server: " + serverAddress, serverAddress);
+                //e.printStackTrace();
                 return false;
             }
-            LOGGER.log(Level.INFO, "Connected to server: " + serverAddress, serverAddress);
+            MyLogger.log(Level.INFO, "Connected to server: " + serverAddress, serverAddress);
             return true;
         }
 
@@ -140,9 +135,9 @@ public class Client extends Application{
 
     /**
      * declares and runs the service that transfers text communication
-     * @param messgaeArea a reference to the gui text area so text can be appended
+     * @param messagearea a reference to the gui text area so text can be appended
      */
-        public void runChatService(TextArea messgaeArea){                                     //this method creates and starts the service
+        public void runChatService(TextArea messagearea){                                     //this method creates and starts the service
             Service chatService = new Service() {
                 @Override
                 protected Task createTask() {
@@ -162,19 +157,19 @@ public class Client extends Application{
                                         Platform.runLater(new Runnable() {
                                             @Override
                                             public void run() {
-                                                messgaeArea.appendText(line.substring(8) + "\n");
+                                                messagearea.appendText(line.substring(8) + "\n");
                                             }
                                         });
                                         AudioEffects.play("boop.wav");
                                     }
                                 }//end try
                                 catch(SocketException e){
-                                    //will prevent endless loop if server goes downs
-                                    LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                                    //will prevent endless loop if server goes down
+                                    MyLogger.log(Level.SEVERE, e.getMessage(), e);
                                     cont = false;
                                 }
                                 catch (Exception e){
-                                    LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                                    MyLogger.log(Level.SEVERE, e.getMessage(), e);
                                 }
 
                             }//end while
@@ -186,8 +181,6 @@ public class Client extends Application{
 
             chatService.start();
         }
-
-
 
 
     /**
@@ -211,11 +204,11 @@ public class Client extends Application{
                                 clip.drain();
                             } catch(SocketException e){
                                 //will prevent endless loop if server goes down
-                                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                                MyLogger.log(Level.SEVERE, e.getMessage(), e);
                                 cont = false;
                             }
                             catch (Exception e){
-                                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                                MyLogger.log(Level.SEVERE, e.getMessage(), e);
                             }
                         }//end while
                        return null;
@@ -247,7 +240,7 @@ public class Client extends Application{
 
 
 //    //maybe move to LoadSave class*******************************
-    private void sendLine(){
+    public void sendLine(Object asker){    //TODO pass .wav file as param to send audio from diff files
 
         File audioFile = new File("RecentAudio.wav");
 
@@ -255,36 +248,33 @@ public class Client extends Application{
         try {
             FileInputStream fin = new FileInputStream(audioFile);
             OutputStream os = audioOut;
-            byte buffer[] = new byte[2048];//weird array thing*
+            byte buffer[] = new byte[2048];
             int count;
             while((count = fin.read(buffer)) != -1){
                 os.write(buffer, 0, count);
             }
+            ((ChatSceneController)asker).notifyClient("Send Successful");
         }
-        catch(Exception e){
-            //TODO
+        catch(FileNotFoundException fnfe){
+            ((ChatSceneController)asker).notifyClient("Audio File not found");
+            MyLogger.log(Level.SEVERE, fnfe.getMessage(), fnfe);
+        }
+        catch(IOException ioe){
+            ((ChatSceneController)asker).notifyClient("Could not successfully send audio");
+            MyLogger.log(Level.SEVERE, ioe.getMessage(), ioe);
         }
 
     }//end sendLine
 
 
     //maybe move to LoadSave class**********************************************
-    private void voiceLine() {
-
-        final Record line = new Record();
-        Thread stopper = new Thread(new Runnable() {
-            public void run() {
-                try {
-                    Thread.sleep(5000);//change time if needed
-                } catch (InterruptedException ie) {
-                    //TODO
-                }
-                line.stopRec();
-            }
-        });
-        stopper.start();
-        line.startRec();
-
+    public void voiceLine(Object asker) {
+        if(recording.state()){
+            recording.startRec(asker);
+        }
+        else{
+            ((ChatSceneController)asker).notifyClient("Not in good state to record audio");
+        }
     }
 
 

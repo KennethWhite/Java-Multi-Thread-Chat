@@ -34,7 +34,7 @@ public class Server {
     //List of all outstreams related to audio for the clients
     private static ArrayList<OutputStream> audioWriters = new ArrayList<>();
 
-    private static final Logger LOGGER = SetupLogger.startLogger(Server.class.getName());
+
 
 
     public static void main(String[] args) throws Exception {
@@ -55,11 +55,11 @@ public class Server {
             }
         }
         catch(java.net.BindException ex){
-            LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+            MyLogger.log(Level.SEVERE, ex.getMessage(), ex);
         }
         catch(Exception ex){
             System.out.println("Error in main: "+ex.getMessage());
-            LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+            MyLogger.log(Level.SEVERE, ex.getMessage(), ex);
         }
         finally {
             if(listener != null)
@@ -111,12 +111,12 @@ public class Server {
                 while (notaccepted) {
                     out.println("SUBMITNAME");//requests a name from the client
                     name = in.readLine();
-                    if (name != null && !name.equals("")) {
+                    if (!name.equals("null") && !name.equals("")) {
 
                         synchronized (names) {                                              //synchronized means no other changes can be made to 'names' while this thread is active
                             if (!names.contains(name)) {                                    //adds name to list if it doesnt already exist
                                 names.insert(name);
-                                LOGGER.log(Level.INFO, "Added client to server: " + name);   //logs each client to file
+                                MyLogger.log(Level.INFO, "Added client to server: " + name);   //logs each client to file
                                 notaccepted = false;
                             }
 
@@ -184,7 +184,7 @@ public class Server {
             }
             catch (IOException e) {
                 System.out.println(e );
-                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                MyLogger.log(Level.SEVERE, e.getMessage(), e);
 
             } finally {
                 // This client is going down!  Remove its name and its print
@@ -192,7 +192,7 @@ public class Server {
                 if (name != null) {
                     names.remove(name);
 
-                    LOGGER.log(Level.INFO, "Removing client: " + name);
+                    MyLogger.log(Level.INFO, "Removing client: " + name);
                 }
                 if (out != null) {
                     for(PrintWriter writer : writers){
@@ -203,12 +203,9 @@ public class Server {
 
                 try {
                     typeS.close();
-                    java.util.logging.Handler[] handlers = LOGGER.getHandlers();
-                    for(int i = 0; i < handlers.length; i++){
-                        handlers[i].close();
-                    }
+                    MyLogger.closeLogger();
                 } catch (IOException e) {
-                    LOGGER.log(Level.SEVERE, "ERROR IN FINALLY BLOCK:\n " + e.getMessage() +
+                    MyLogger.log(Level.SEVERE, "ERROR IN FINALLY BLOCK:\n " + e.getMessage() +
                             "\nList of clients: \n{1}", new Object[]{e, names});
                 }
 
