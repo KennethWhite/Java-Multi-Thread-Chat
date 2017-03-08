@@ -34,27 +34,27 @@ public class SetupLogger {
                 System.out.println("Directory out/LogFiles was created.");
             }
 
-            File[] array = {
-                    new File("./out/LogFiles/ErrorLog.log"),
-                    new File("./out/LogFiles/Log.log"),
-                    new File("./out/LogFiles/Debug.log"),
-                    new File("./out/LogFiles/ErrorLog.log.lck"),
-                    new File("./out/LogFiles/Log.log.lck"),
-                    new File("./out/LogFiles/Debug.log.lck"),};
-
-
-
-            for (int i = 0; i < array.length; i++) {
-                try {
-                    if (array[i].createNewFile()) {
-                        System.out.println(array[i].getName() + " was created.");
-                    }
-                } catch (IOException ex) {
-                    System.out.println("Unexpected error initializing " + array[i].getName());
-                    System.out.println(ex.getMessage() + "\n");
-                    ex.printStackTrace();
-                }
-            }
+//            File[] array = {
+//                    new File("./out/LogFiles/ErrorLog.log"),
+//                    new File("./out/LogFiles/Log.log"),
+//                    new File("./out/LogFiles/Debug.log"),
+//                    new File("./out/LogFiles/ErrorLog.log.lck"),
+//                    new File("./out/LogFiles/Log.log.lck"),
+//                    new File("./out/LogFiles/Debug.log.lck"),};
+//
+//
+//
+//            for (int i = 0; i < array.length; i++) {
+//                try {
+//                    if (array[i].createNewFile()) {
+//                        System.out.println(array[i].getName() + " was created.");
+//                    }
+//                } catch (IOException ex) {
+//                    System.out.println("Unexpected error initializing " + array[i].getName());
+//                    System.out.println(ex.getMessage() + "\n");
+//                    ex.printStackTrace();
+//                }
+//            }
 
 
             Formatter format = new SimpleFormatter();//uses default format
