@@ -43,7 +43,7 @@ public class AudioEffects {
             }
 
         } catch (Exception e) {
-            Client.getLOGGER().log(Level.FINER, e.getMessage(), e);
+            //Client.getLOGGER().log(Level.FINER, e.getMessage(), e);
         }
     }
 
