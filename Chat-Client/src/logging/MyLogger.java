@@ -1,15 +1,13 @@
 package logging;
 
-
+import java.io.File;
 import java.io.IOException;
-
 import java.util.logging.*;
 
-
-import java.io.File;
-
-
-public class SetupLogger {
+/**
+ * Created by User on 3/6/2017.
+ */
+public class MyLogger {
     /*
     *
      * Filehandlers are connected to their respective log files, with APPEND set to TRUE
@@ -21,47 +19,24 @@ public class SetupLogger {
      * All handlers are then added to the logger, which is returned
      */
 
+    static Logger logger;
+    public Handler[] fileHandlers;
+    Formatter plainText;
 
-    public static Logger startLogger(String name) {//starts a default logger for info, debug, error logs.
+
+    public MyLogger() {//starts a default logger for info, debug, error logs.
         try {
-            if (name == null) {
-                throw new IllegalArgumentException("Parameter name null on call to startLogger!");
-            }
-
-
             File dir = new File("out/LogFiles");
             if (dir.mkdirs()) {
                 System.out.println("Directory out/LogFiles was created.");
             }
 
-//            File[] array = {
-//                    new File("./out/LogFiles/ErrorLog.log"),                                  //commented code made no difference on the logger running
-//                    new File("./out/LogFiles/Log.log"),
-//                    new File("./out/LogFiles/Debug.log"),
-//
-//            };
-//
-//
-//
-//            for (int i = 0; i < array.length; i++) {
-//                try {
-//                    if (array[i].createNewFile()) {
-//                        System.out.println(array[i].getName() + " was created.");
-//                    }
-//                } catch (IOException ex) {
-//                    System.out.println("Unexpected error initializing " + array[i].getName());
-//                    System.out.println(ex.getMessage() + "\n");
-//                    ex.printStackTrace();
-//                }
-//            }
-
-
             Formatter format = new SimpleFormatter();//uses default format
-            Logger ret = Logger.getLogger(name);
+            logger = Logger.getLogger("");//creates root logger
 
             //this disables parent handlers in the root logger, prevents writing to console twice when logging Level.INFO
             // and higher levels
-            ret.setUseParentHandlers(false);
+            logger.setUseParentHandlers(false);
 
             //creates file/console handlers
             FileHandler errOut = new FileHandler("./out/LogFiles/ErrorLog.log", true);
@@ -77,22 +52,18 @@ public class SetupLogger {
 
             for (int i = 0; i < handlerArray.length; i++) {
                 handlerArray[i].setFormatter(format);
-                ret.addHandler(handlerArray[i]);
+                logger.addHandler(handlerArray[i]);
             }
 
-
-            return ret;
         } catch (IOException ex) {
             System.out.println("Error creating log files");
             System.out.println(ex.getMessage() + "\n");
             ex.printStackTrace();
-            return null;
         } catch (Exception ex) {
             System.out.println("Error setting up logger");
             System.out.println(ex.getMessage() + "\n");
             ex.printStackTrace();
-            return null;
         }
     }
 
-}//end class
+}
