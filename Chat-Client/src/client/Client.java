@@ -1,5 +1,5 @@
 package client;
-
+//a change
 //imports
  import javafx.application.Application;
  import javafx.application.Platform;
@@ -129,7 +129,6 @@ public class Client extends Application{
             }
             catch (Exception e) {
                 LOGGER.log(Level.INFO, "Failed to connect to server: " + serverAddress, serverAddress);
-                //e.printStackTrace();
                 return false;
             }
             LOGGER.log(Level.INFO, "Connected to server: " + serverAddress, serverAddress);
