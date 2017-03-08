@@ -9,22 +9,17 @@ package client;
  import javafx.fxml.FXMLLoader;
  import javafx.scene.Parent;
  import javafx.scene.Scene;
- import javafx.scene.control.Label;
  import javafx.scene.control.TextArea;
- import javafx.scene.control.TextField;
  import javafx.stage.Stage;
- import logging.SetupLogger;
+ import logging.MyLogger;
+
  import java.io.*;
  import java.net.*;
  import javax.sound.sampled.*;
  import javax.swing.*;
  import javax.sound.sampled.AudioSystem;
- import java.text.DateFormat;
- import java.text.SimpleDateFormat;
  import java.util.Properties;
- import java.util.logging.Handler;
  import java.util.logging.Level;
- import java.util.logging.Logger;
 
 
 public class Client extends Application{
@@ -49,7 +44,6 @@ public class Client extends Application{
     private OutputStream audioOut;
     private BufferedInputStream audioIn;
     private Stage window;
-    private static final Logger LOGGER = SetupLogger.startLogger(Client.class.getName());
     private String userName = "";
     private Record recording;
 
@@ -74,11 +68,7 @@ public class Client extends Application{
      * closes logger files when the user closes the fx window
      */
     private void closeClient(){
-        Handler[] handlers = LOGGER.getHandlers();
-        LOGGER.log(Level.INFO, "User Exit", handlers);
-        for(int i = 0; i < handlers.length; i++){
-            handlers[i].close();
-        }
+        MyLogger.closeLogger();//closes logger properly
         this.window.close();
     }
 
@@ -132,11 +122,11 @@ public class Client extends Application{
 
             }
             catch (Exception e) {
-                LOGGER.log(Level.INFO, "Failed to connect to server: " + serverAddress, serverAddress);
+                MyLogger.log(Level.INFO, "Failed to connect to server: " + serverAddress, serverAddress);
                 //e.printStackTrace();
                 return false;
             }
-            LOGGER.log(Level.INFO, "Connected to server: " + serverAddress, serverAddress);
+            MyLogger.log(Level.INFO, "Connected to server: " + serverAddress, serverAddress);
             return true;
         }
 
@@ -174,12 +164,12 @@ public class Client extends Application{
                                     }
                                 }//end try
                                 catch(SocketException e){
-                                    //will prevent endless loop if server goes downs
-                                    LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                                    //will prevent endless loop if server goes down
+                                    MyLogger.log(Level.SEVERE, e.getMessage(), e);
                                     cont = false;
                                 }
                                 catch (Exception e){
-                                    LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                                    MyLogger.log(Level.SEVERE, e.getMessage(), e);
                                 }
 
                             }//end while
@@ -214,11 +204,11 @@ public class Client extends Application{
                                 clip.drain();
                             } catch(SocketException e){
                                 //will prevent endless loop if server goes down
-                                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                                MyLogger.log(Level.SEVERE, e.getMessage(), e);
                                 cont = false;
                             }
                             catch (Exception e){
-                                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                                MyLogger.log(Level.SEVERE, e.getMessage(), e);
                             }
                         }//end while
                        return null;
@@ -267,11 +257,11 @@ public class Client extends Application{
         }
         catch(FileNotFoundException fnfe){
             ((ChatSceneController)asker).notifyClient("Audio File not found");
-            LOGGER.log(Level.SEVERE, fnfe.getMessage(), fnfe);
+            MyLogger.log(Level.SEVERE, fnfe.getMessage(), fnfe);
         }
         catch(IOException ioe){
             ((ChatSceneController)asker).notifyClient("Could not successfully send audio");
-            LOGGER.log(Level.SEVERE, ioe.getMessage(), ioe);
+            MyLogger.log(Level.SEVERE, ioe.getMessage(), ioe);
         }
 
     }//end sendLine
