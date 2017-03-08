@@ -1,16 +1,13 @@
 package client;
 
 import client.display.ChatSceneController;
-import logging.SetupLogger;
-import sun.rmi.runtime.Log;
+import logging.MyLogger;
 
 import javax.sound.sampled.*;
 import javax.sound.sampled.AudioFileFormat.Type;
 import javax.sound.sampled.DataLine.Info;
 import java.io.*;
-import java.lang.annotation.Target;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Created by Daric on 11/27/2016.
@@ -20,7 +17,6 @@ import java.util.logging.Logger;
  */
 public class Record {
 
-    private static Logger LOGGER = SetupLogger.startLogger(Record.class.getName());
     private Type type;
     private File wavFile;
     private TargetDataLine mic;
@@ -40,7 +36,7 @@ public class Record {
             isGoodState = true;
         }
         catch(IOException ioe){
-            LOGGER.log(Level.SEVERE, ioe.getMessage(), ioe);
+            MyLogger.log(Level.SEVERE, ioe.getMessage(), ioe);
             isGoodState = false;
             return;
         }
@@ -61,7 +57,7 @@ public class Record {
                         stopRec(asker);
                     } catch (InterruptedException ie) {
                         Thread.currentThread().interrupt();
-                        LOGGER.log(Level.SEVERE, ie.getMessage(), ie);
+                        MyLogger.log(Level.SEVERE, ie.getMessage(), ie);
                         ((ChatSceneController)asker).notifyClient("Connection Interrupted, may not have gotten all audio ");
                         isGoodState = false;
                         stopRec(asker);
@@ -81,12 +77,12 @@ public class Record {
         }
         catch(LineUnavailableException lue){
             format = new AudioFormat(8000.0f, 16, 1, true, true);
-            LOGGER.log(Level.SEVERE, lue.getMessage(), lue);
+            MyLogger.log(Level.SEVERE, lue.getMessage(), lue);
             ((ChatSceneController)asker).notifyClient("Unable to record");
             isGoodState = false;
         }
         catch(IOException ioe){
-            LOGGER.log(Level.SEVERE, ioe.getMessage(), ioe);
+            MyLogger.log(Level.SEVERE, ioe.getMessage(), ioe);
             ((ChatSceneController)asker).notifyClient("The audio was not saved correctly/lost");
             isGoodState = false;
         }
@@ -100,7 +96,7 @@ public class Record {
             audioInStream.close();
         }
         catch(IOException ioe){
-            LOGGER.log(Level.SEVERE, ioe.getMessage(), ioe);
+            MyLogger.log(Level.SEVERE, ioe.getMessage(), ioe);
             //TODO dont know if this matters
         }
     }

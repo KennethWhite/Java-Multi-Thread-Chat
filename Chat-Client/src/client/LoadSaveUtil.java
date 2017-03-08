@@ -5,8 +5,6 @@ package client;
        if the file does not exist, it is created. if no data is in the file the value is retrieved as null
  */
 
-import logging.SetupLogger;
-
 import java.io.*;
 import java.util.Properties;
 import java.util.logging.Level;

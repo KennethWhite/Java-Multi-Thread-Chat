@@ -1,15 +1,11 @@
 package logging;
 
-
+import java.io.File;
 import java.io.IOException;
-
 import java.util.logging.*;
 
 
-import java.io.File;
-
-
-public class SetupLogger {
+public class MyLogger {
     /*
     *
      * Filehandlers are connected to their respective log files, with APPEND set to TRUE
@@ -21,47 +17,26 @@ public class SetupLogger {
      * All handlers are then added to the logger, which is returned
      */
 
+    static Logger logger;
+    public Handler[] fileHandlers;
+    Formatter plainText;
 
-    public static Logger startLogger(String name) {//starts a default logger for info, debug, error logs.
+    /**
+     * A CTOR that sets up the logger with handlers/filters
+     */
+    public MyLogger() {//starts a default logger for info, debug, error logs.
         try {
-            if (name == null) {
-                throw new IllegalArgumentException("Parameter name null on call to startLogger!");
-            }
-
-
             File dir = new File("out/LogFiles");
             if (dir.mkdirs()) {
                 System.out.println("Directory out/LogFiles was created.");
             }
 
-//            File[] array = {
-//                    new File("./out/LogFiles/ErrorLog.log"),                                  //commented code made no difference on the logger running
-//                    new File("./out/LogFiles/Log.log"),
-//                    new File("./out/LogFiles/Debug.log"),
-//
-//            };
-//
-//
-//
-//            for (int i = 0; i < array.length; i++) {
-//                try {
-//                    if (array[i].createNewFile()) {
-//                        System.out.println(array[i].getName() + " was created.");
-//                    }
-//                } catch (IOException ex) {
-//                    System.out.println("Unexpected error initializing " + array[i].getName());
-//                    System.out.println(ex.getMessage() + "\n");
-//                    ex.printStackTrace();
-//                }
-//            }
-
-
             Formatter format = new SimpleFormatter();//uses default format
-            Logger ret = Logger.getLogger(name);
+            logger = Logger.getLogger("");//creates root logger
 
             //this disables parent handlers in the root logger, prevents writing to console twice when logging Level.INFO
             // and higher levels
-            ret.setUseParentHandlers(false);
+            logger.setUseParentHandlers(false);
 
             //creates file/console handlers
             FileHandler errOut = new FileHandler("./out/LogFiles/ErrorLog.log", true);
@@ -77,22 +52,69 @@ public class SetupLogger {
 
             for (int i = 0; i < handlerArray.length; i++) {
                 handlerArray[i].setFormatter(format);
-                ret.addHandler(handlerArray[i]);
+                logger.addHandler(handlerArray[i]);
             }
 
-
-            return ret;
         } catch (IOException ex) {
             System.out.println("Error creating log files");
             System.out.println(ex.getMessage() + "\n");
             ex.printStackTrace();
-            return null;
         } catch (Exception ex) {
             System.out.println("Error setting up logger");
             System.out.println(ex.getMessage() + "\n");
             ex.printStackTrace();
-            return null;
         }
     }
 
-}//end class
+    /**
+     *Insures the logger has been created, returns a reference to this logger.
+     * @return a reference this classes logger
+     */
+    private static Logger getLogger(){
+        if(logger == null){
+            new MyLogger();//call CTOR for logger
+            return logger;
+        }
+        else{
+            return logger;
+        }
+    }
+
+    /**
+     * Overloaded method that calls default log method on this classes Logger
+     * @param lvl LEVEL of the log
+     * @param msg String message to log
+     * @param objs Array of Objects to be added to log
+     */
+    public static void log(Level lvl, String msg, Object objs){
+        if(msg == null && objs == null){
+            System.out.println("Error, null params on call to MyLogger.log()");
+        }
+        getLogger().log(lvl, msg, objs);
+    }
+    /**
+     * Overloaded method that calls default log method on this classes Logger
+     * @param lvl LEVEL of the log
+     * @param msg String message to log
+     */
+    public static void log(Level lvl, String msg){
+        if(msg == null){
+            System.out.println("Error, null params on call to MyLogger.log()");
+        }
+        getLogger().log(lvl, msg);
+    }
+
+    /**
+     * This method properly closes the Handlers of logger
+     */
+    public static void closeLogger(){
+        if(logger != null){
+            Handler[] handlers = logger.getHandlers();
+            logger.log(Level.INFO, "User exit: ", handlers);
+            for(int i = 0; i < handlers.length; i++){
+                handlers[i].close();
+            }
+        }
+
+    }
+}
