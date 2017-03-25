@@ -1,5 +1,7 @@
 package commandP;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 
 /**
@@ -8,9 +10,9 @@ import java.io.PrintWriter;
 public class UpTime implements Icommands {
 
     private long connTime;
-    private PrintWriter out;
+    private ObjectOutputStream out;
 
-    public UpTime(PrintWriter out, long connTime){
+    public UpTime(ObjectOutputStream out, long connTime){
         this.connTime = connTime;
         this.out = out;
     }
@@ -20,7 +22,13 @@ public class UpTime implements Icommands {
         long sec = ((System.currentTimeMillis() - connTime) / 1000) - 60*min;
         long hour = min / 60;
         min = min %60;
-        out.printf("MESSAGE Server has been running for %d hours %d minutes %d seconds\n", hour, min, sec);
+        String temp = "MESSAGE Server has been running for " + hour + " hours " + min + " minutes " + sec + " seconds\n";
+        try {
+            out.writeObject(temp);
+        }
+        catch(IOException ioe){
+            //TODO
+        }
         return null;
     }
 

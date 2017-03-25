@@ -29,7 +29,8 @@ public class Server {
     private static UsernameTrie names = new UsernameTrie();
 
     //List of all printwriters for the clients
-    private static ArrayList<PrintWriter> writers = new ArrayList<PrintWriter>();
+    //private static ArrayList<PrintWriter> writers = new ArrayList<PrintWriter>();
+    private static ArrayList<ObjectOutputStream> objectWriters = new ArrayList<>();
 
     //List of all outstreams related to audio for the clients
     private static ArrayList<OutputStream> audioWriters = new ArrayList<>();
@@ -82,11 +83,12 @@ public class Server {
         private Socket audioS;
         private BufferedReader in;
         private PrintWriter out;
+
+        private ObjectInputStream objectIn;
+        private ObjectOutputStream objectOut;
+
         private OutputStream audioOut;
         private DataInputStream audioIn;
-
-        ObjectOutputStream dataOut;
-        ObjectInputStream dataIn;
 
 
         public Handler(Socket typeS, Socket audioS) {
@@ -99,19 +101,25 @@ public class Server {
             try {
 
                 // Create character streams for the socket.
-                in = new BufferedReader(new InputStreamReader(typeS.getInputStream()));
-                out = new PrintWriter(typeS.getOutputStream(), true);
+                //in = new BufferedReader(new InputStreamReader(typeS.getInputStream()));
+                //out = new PrintWriter(typeS.getOutputStream(), true);
+
+                objectOut = new ObjectOutputStream(typeS.getOutputStream());
+                objectIn = new ObjectInputStream(typeS.getInputStream());
+
                 audioIn = new DataInputStream(audioS.getInputStream());
                 audioOut = audioS.getOutputStream();
                 boolean notaccepted = true;
 
-                //ObjectOutputStream dataOut = new ObjectOutputStream(typeS.getOutputStream());
-                dataOut = new ObjectOutputStream(new BufferedOutputStream(typeS.getOutputStream()));
-                dataIn = new ObjectInputStream(new BufferedInputStream(typeS.getInputStream()));            //this line prevents the server from running
 
                 while (notaccepted) {
-                    out.println("SUBMITNAME");//requests a name from the client
-                    name = in.readLine();
+                    objectOut.writeObject("SUBMITNAME");//requests a name from the client
+                    try {
+                        name = (String)objectIn.readObject();
+                    }
+                    catch(ClassNotFoundException cnfe){
+                        //TODO
+                    }
                     if (!name.equals("null") && !name.equals("")) {
 
                         synchronized (names) {                                              //synchronized means no other changes can be made to 'names' while this thread is active
@@ -124,12 +132,17 @@ public class Server {
                         }
                     }
                 }
+                /*
                 for(PrintWriter writer : writers){
                     writer.println("MESSAGE SERVER: Added " + name + " to chat.");
                 }
-                out.println("NAMEACCEPTED");
-                out.println("MESSAGE Type /help for a list of server commands");
-                writers.add(out);                                                       //adds printwriter to ArrayList
+                */
+                for(ObjectOutputStream writer : objectWriters){
+                    writer.writeObject("MESSAGE SERVER: Added " + name + " to chat.");
+                }
+                objectOut.writeObject("NAMEACCEPTED");
+                objectOut.writeObject("MESSAGE Type /help for a list of server commands");
+                objectWriters.add(objectOut);                                                       //adds printwriter to ArrayList
                 audioWriters.add(audioOut);
 
                 /*
@@ -166,14 +179,26 @@ public class Server {
                 //loop for text
                 while (true) {
 
-                    String input = in.readLine();
+                    String input = "";
+                    try {
+                        input = (String) objectIn.readObject();
+                    }
+                    catch(ClassNotFoundException cnfe){
+                        //TODO
+                    }
                     if (shouldParse(input)) {
                         input = parse(input);                                           //parses input for commands
                     }
                     if (input != null && !input.equals("")) {
                         System.out.println(name + ": " + input);
+                        /*
                         for (PrintWriter writer : writers) {
                             writer.println("MESSAGE " + name + ": " + input);           // sends each client is sent the message
+                        }
+                        */
+                        for(ObjectOutputStream writer : objectWriters){
+                            String temp = "MESSAGE " + name + ": " + input;
+                            writer.writeObject(temp);
                         }
                     }
                 }
@@ -195,11 +220,22 @@ public class Server {
 
                     MyLogger.log(Level.INFO, "Removing client: " + name);
                 }
-                if (out != null) {
+                if (objectOut != null) {
+                    /*
                     for(PrintWriter writer : writers){
                         writer.println("MESSAGE SERVER: Removing client " + name + " from chat.");
                     }
                     writers.remove(out);
+                    */
+                    for(ObjectOutputStream writer : objectWriters){
+                        try {
+                            writer.writeObject("MESSAGE SERVER: Removing client " + name + " from chat.");
+                        }
+                        catch(IOException ioe){
+                            //TODO
+                        }
+                    }
+                    objectWriters.remove(objectOut);
                 }
 
                 try {
@@ -226,7 +262,7 @@ public class Server {
 
             String temp = s.toLowerCase();
             CommandFactory cF = new CommandFactory();   //could make this a Handler attribute***
-            Icommands curCommand = cF.getCommand(temp, out, timeConnection);
+            Icommands curCommand = cF.getCommand(temp, objectOut, timeConnection);
 
             return curCommand.perform();
 
