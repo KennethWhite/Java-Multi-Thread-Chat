@@ -106,7 +106,8 @@ public class Server {
                 boolean notaccepted = true;
 
                 //ObjectOutputStream dataOut = new ObjectOutputStream(typeS.getOutputStream());
-                //ObjectInputStream dataIn = new ObjectInputStream(new BufferedInputStream(typeS.getInputStream()));            //this line prevents the server from running
+                dataOut = new ObjectOutputStream(new BufferedOutputStream(typeS.getOutputStream()));
+                dataIn = new ObjectInputStream(new BufferedInputStream(typeS.getInputStream()));            //this line prevents the server from running
 
                 while (notaccepted) {
                     out.println("SUBMITNAME");//requests a name from the client
