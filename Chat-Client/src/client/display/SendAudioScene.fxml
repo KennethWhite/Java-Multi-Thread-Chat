@@ -6,6 +6,7 @@
 <?import javafx.scene.layout.*?>
 
 
+<?import com.sun.javafx.scene.control.skin.SplitPaneSkin.Content?>
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.display.ChatSceneController">
    <children>
       <HBox alignment="CENTER" prefHeight="200.0" prefWidth="300.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -14,7 +15,7 @@
             <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="30.0">
                <children>
                   <Button mnemonicParsing="false" onAction="#recordBtnHandler" text="Record" />
-                  <Button mnemonicParsing="false" onAction="#listenBtnHandler" text="Listen" />
+                  <Button mnemonicParsing="false" onAction="#listenBtnHandler" text="PlayBack" />
                   <Button mnemonicParsing="false" onAction="#sendBtnHandler" text="Send" />
                </children>
             </VBox>

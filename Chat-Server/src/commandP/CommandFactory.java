@@ -1,6 +1,6 @@
 package commandP;
 
-import java.io.PrintWriter;
+import java.io.ObjectOutputStream;
 
 /**
  * Created by Daric on 11/6/2016.
@@ -10,7 +10,7 @@ import java.io.PrintWriter;
  */
 public class CommandFactory {
 
-    public Icommands getCommand(String input, PrintWriter out, long connTime){
+    public Icommands getCommand(String input, ObjectOutputStream out, long connTime){
 
 
         Icommands temp = null;  //initialize temp for which the icommand will be kept
