@@ -41,6 +41,10 @@ public class Client extends Application{
      */
     private BufferedReader in;
     private PrintWriter out;
+
+    private ObjectInputStream objectIn;
+    private ObjectOutputStream objectOut;
+
     private OutputStream audioOut;
     private BufferedInputStream audioIn;
     private Stage window;
@@ -96,21 +100,29 @@ public class Client extends Application{
             try {
                 typeS = new Socket(serverAddress, 9001);
                 Socket audioS = new Socket(serverAddress, 9002);//creates another socket connection to server..for audio
-                this.in = new BufferedReader(new InputStreamReader(typeS.getInputStream()));       //buffered reader to recieve from serverfor text
-                this.out = new PrintWriter(typeS.getOutputStream(), true);                       //printwriter to write to server
+                //this.in = new BufferedReader(new InputStreamReader(typeS.getInputStream()));       //buffered reader to recieve from serverfor text
+                //this.out = new PrintWriter(typeS.getOutputStream(), true);                       //printwriter to write to server
+
+                InputStream intemp = typeS.getInputStream();
+                OutputStream outtemp = typeS.getOutputStream();
+                this.objectOut = new ObjectOutputStream(outtemp);
+                this.objectIn = new ObjectInputStream(intemp);
+
                 this.audioIn = new BufferedInputStream(audioS.getInputStream());                //input stream to recieve from server for audio
                 this.audioOut = audioS.getOutputStream();
                 this.recording = new Record();
 
-                in.readLine();
-                out.println(userName);
+                //in.readLine();
+                //out.println(userName);
+                objectIn.readObject();
+                objectOut.writeObject(userName);
 
                 Task myTask = new Task() {  //this task ensure valid name
                     @Override
                     protected Object call() throws Exception {
-                        while(in.readLine().startsWith("SUBMITNAME")){
+                        while(((String)objectIn.readObject()).startsWith("SUBMITNAME")){
                             userName = getName();
-                            out.println(userName);
+                            objectOut.writeObject(userName);
                         }
                         Properties userPrefObj = LoadSaveUtil.getPropertyObject(LoadSaveUtil.userSettingFilename);
                         userPrefObj.setProperty("USERNAME",userName);
@@ -151,7 +163,7 @@ public class Client extends Application{
 
                                 try{
                                     //for typing
-                                    String line = in.readLine();
+                                    String line = (String)objectIn.readObject();
 
                                     if (line != null && line.startsWith("MESSAGE")) {
                                         Platform.runLater(new Runnable() {
@@ -226,7 +238,12 @@ public class Client extends Application{
      * sends a string message to the server
      */
     public void sendToServer(String strToSend){
-        out.println(strToSend);
+        try {
+            objectOut.writeObject(strToSend);
+        }
+        catch(IOException ioe){
+            //TODO
+        }
     }
 
     /**
