@@ -45,7 +45,7 @@ public class ChatSceneController implements Initializable{
                 inputField.setText("");
             }
         });
-
+        
         client.runChatService(messageArea);                                          //starts the client-server service
         client.runAudioService();
 

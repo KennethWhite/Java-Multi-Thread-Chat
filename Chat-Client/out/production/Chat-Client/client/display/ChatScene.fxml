@@ -36,7 +36,11 @@
             </TextField>
          </bottom>
          <center>
-            <TextFlow fx:id="messageArea" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+            <ScrollPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+               <content>
+                  <TextFlow fx:id="messageArea" prefHeight="200.0" prefWidth="200.0" />
+               </content>
+            </ScrollPane>
          </center>
       </BorderPane>
    </children>
