@@ -1,5 +1,7 @@
 package commandP;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.util.Date;
 
@@ -7,17 +9,22 @@ import java.util.Date;
  * Created by Daric on 11/9/2016.
  */
 public class DateC implements Icommands {
-    private PrintWriter out;
+    private ObjectOutputStream out;
 
-    public DateC(PrintWriter out){
+    public DateC(ObjectOutputStream out){
         this.out = out;
     }
 
     public String perform(){
         if(out != null) {
             Date date = new Date();
-            out.println("MESSAGE " + date.toString());
+            try {
+                out.writeObject("MESSAGE " + date.toString());
             }
+            catch(IOException ioe){
+                //TODO
+            }
+        }
         return null;
     }
 
