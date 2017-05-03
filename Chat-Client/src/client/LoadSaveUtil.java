@@ -20,7 +20,7 @@ public class LoadSaveUtil {
 
 
     /**
-     * retrieves the property object associated with the file name. if it doesn't exist, create one
+     * retrieves  the property object associated with the file name. if it doesn't exist, create one
      * @param filename  The filename to the file that the properties object is saved
      * @return returns the Properties object in the file, or an empty one
      */
@@ -43,7 +43,7 @@ public class LoadSaveUtil {
 
 
     /**
-     * saves the properties object to the file
+     * saves a properties object to the file
      * @param objToSave the properties object to the file
      * @param filename location to be saved
      * @return save successful

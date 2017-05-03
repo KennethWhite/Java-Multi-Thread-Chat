@@ -1,5 +1,5 @@
 package client;
-
+//change
 //imports
  import client.display.ChatSceneController;
  import javafx.application.Application;
@@ -10,6 +10,8 @@ package client;
  import javafx.scene.Parent;
  import javafx.scene.Scene;
  import javafx.scene.control.TextArea;
+ import javafx.scene.text.Text;
+ import javafx.scene.text.TextFlow;
  import javafx.stage.Stage;
  import logging.MyLogger;
 
@@ -149,7 +151,7 @@ public class Client extends Application{
      * declares and runs the service that transfers text communication
      * @param messagearea a reference to the gui text area so text can be appended
      */
-        public void runChatService(TextArea messagearea){                                     //this method creates and starts the service
+        public void runChatService(TextFlow messagearea){                                     //this method creates and starts the service
             Service chatService = new Service() {
                 @Override
                 protected Task createTask() {
@@ -169,7 +171,7 @@ public class Client extends Application{
                                         Platform.runLater(new Runnable() {
                                             @Override
                                             public void run() {
-                                                messagearea.appendText(line.substring(8) + "\n");
+                                                messagearea.getChildren().add(new Text(line.substring(8) + "\n"));
                                             }
                                         });
                                         AudioEffects.play("boop.wav");
@@ -242,7 +244,7 @@ public class Client extends Application{
             objectOut.writeObject(strToSend);
         }
         catch(IOException ioe){
-            //TODO
+            MyLogger.log(Level.SEVERE, ioe.getMessage(), ioe);
         }
     }
 

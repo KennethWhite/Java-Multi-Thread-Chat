@@ -11,7 +11,10 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.TextFlow;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.net.URL;
@@ -24,7 +27,7 @@ public class ChatSceneController implements Initializable{
      * Objects injected from fxml
      */
     public TextField inputField;
-    public TextArea messageArea;
+    public TextFlow messageArea;
     public ProgressBar recordProgress;
     public Label statusBar;
     private Client client;
@@ -42,49 +45,28 @@ public class ChatSceneController implements Initializable{
                 inputField.setText("");
             }
         });
-
+        
         client.runChatService(messageArea);                                          //starts the client-server service
         client.runAudioService();
 
     }
 
-
     /**
      * opens separate send audio menu when button pressed
      */
-    public void sendAudioBtnHandler(){
+    public void sendAudioBtnHandler() {
         try {
-            Stage audioWindow = new Stage();
-            Parent root =  FXMLLoader.load(getClass().getResource("SendAudioScene.fxml"));        //i think this needs moved to directory that contains no java files
-            audioWindow.setTitle("Chat Client");
-            audioWindow.setScene(new Scene(root));
-            audioWindow.show();
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("./SendAudioScene.fxml"));
+            Parent root1 = (Parent) fxmlLoader.load();
+            SendAudioSceneController ctlr = (SendAudioSceneController) fxmlLoader.getController();                      //we get an instance of our controller
+            ctlr.setup(root1, messageArea);                                                                             //call custom creat method
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
 
-    /**
-     * records audio
-     */
-    public void recordBtnHandler() {
-        client.voiceLine(this);
-    }
-
-    /**
-     * plays the recorded audio
-     */
-    public void listenBtnHandler(){
-
-    }
-
-    /**
-     * sends the audio to server
-     */
-    public void sendBtnHandler(){
-        client.sendLine(this);
-    }
 
     public void notifyClient(String message){
         this.statusBar.setText(message);
