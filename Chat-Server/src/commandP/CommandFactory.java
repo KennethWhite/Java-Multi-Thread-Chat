@@ -10,6 +10,14 @@ import java.io.ObjectOutputStream;
  */
 public class CommandFactory {
 
+    /**
+     * Factory used to return the corresponding command.
+     *
+      * @param input
+     * @param out
+     * @param connTime
+     * @return
+     */
     public Icommands getCommand(String input, ObjectOutputStream out, long connTime){
 
 

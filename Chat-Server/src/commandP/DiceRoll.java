@@ -7,6 +7,12 @@ package commandP;
  * to simulate a dice roll.
  */
 public class DiceRoll implements Icommands{
+
+    /**
+     * Performs the random roll of dice.
+     *
+     * @return
+     */
     public String perform(){
         int var1 = ((int)(Math.random() * 10) +2);
         if(var1 == 2){
@@ -18,11 +24,21 @@ public class DiceRoll implements Icommands{
         return "Rolling two dice: Roll is " + var1 + ".";
     }
 
+    /**
+     * Displays what happens when the DiceRoll command is used.
+     *
+     * @return
+     */
     @Override
     public String help(){
         return "/DiceRoll - Simulates rolling a pair of dice, returns a number between 2 and 12.";
     }
 
+    /**
+     * retuns 'DiceRoll'
+     *
+     * @return
+     */
     public String getName(){
         return "DiceRoll";
     }
