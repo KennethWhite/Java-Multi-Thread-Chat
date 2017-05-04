@@ -86,6 +86,7 @@ public class Server {
 
         private ObjectInputStream objectIn;
         private ObjectOutputStream objectOut;
+        private Object input;
 
         private OutputStream audioOut;
         private DataInputStream audioIn;
@@ -132,11 +133,7 @@ public class Server {
                         }
                     }
                 }
-                /*
-                for(PrintWriter writer : writers){
-                    writer.println("MESSAGE SERVER: Added " + name + " to chat.");
-                }
-                */
+
                 for(ObjectOutputStream writer : objectWriters){
                     writer.writeObject("MESSAGE SERVER: Added " + name + " to chat.");
                 }
@@ -179,27 +176,33 @@ public class Server {
                 //loop for text
                 while (true) {
 
-                    String input = "";
+                    String strIn = null;
+
                     try {
-                        input = (String) objectIn.readObject();
+                        input = objectIn.readObject();
                     }
                     catch(ClassNotFoundException cnfe){
                         //TODO
                     }
-                    if (shouldParse(input)) {
-                        input = parse(input);                                           //parses input for commands
+
+                    if(input instanceof String) {
+
+                        strIn = (String)input;
+
+                        if (shouldParse(strIn)) {
+                            strIn = parse(strIn);                                           //parses input for commands
+                        }
+                        if (strIn != null && !strIn.equals("")) {
+                            System.out.println(name + ": " + strIn);
+
+                            for (ObjectOutputStream writer : objectWriters) {
+                                String temp = "MESSAGE " + name + ": " + strIn;
+                                writer.writeObject(temp);
+                            }
+                        }
                     }
-                    if (input != null && !input.equals("")) {
-                        System.out.println(name + ": " + input);
-                        /*
-                        for (PrintWriter writer : writers) {
-                            writer.println("MESSAGE " + name + ": " + input);           // sends each client is sent the message
-                        }
-                        */
-                        for(ObjectOutputStream writer : objectWriters){
-                            String temp = "MESSAGE " + name + ": " + input;
-                            writer.writeObject(temp);
-                        }
+                    else{
+                        //TODO game data handling
                     }
                 }
 
@@ -221,12 +224,7 @@ public class Server {
                     MyLogger.log(Level.INFO, "Removing client: " + name);
                 }
                 if (objectOut != null) {
-                    /*
-                    for(PrintWriter writer : writers){
-                        writer.println("MESSAGE SERVER: Removing client " + name + " from chat.");
-                    }
-                    writers.remove(out);
-                    */
+
                     for(ObjectOutputStream writer : objectWriters){
                         try {
                             writer.writeObject("MESSAGE SERVER: Removing client " + name + " from chat.");
