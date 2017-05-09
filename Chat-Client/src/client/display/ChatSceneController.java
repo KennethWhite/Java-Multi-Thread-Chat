@@ -29,7 +29,6 @@ public class ChatSceneController implements Initializable{
     public TextField inputField;
     public TextFlow messageArea;
     public ProgressBar recordProgress;
-    public Label statusBar;
     private Client client;
 
     @Override
@@ -64,12 +63,6 @@ public class ChatSceneController implements Initializable{
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-
-
-    public void notifyClient(String message){
-        this.statusBar.setText(message);
     }
 
 

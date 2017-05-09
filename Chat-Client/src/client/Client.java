@@ -220,9 +220,11 @@ public class Client extends Application{
                                 //will prevent endless loop if server goes down
                                 MyLogger.log(Level.SEVERE, e.getMessage(), e);
                                 cont = false;
+                                System.out.println("wrong");
                             }
                             catch (Exception e){
                                 MyLogger.log(Level.SEVERE, e.getMessage(), e);
+                                System.out.println("wrong2");
                             }
                         }//end while
                        return null;
@@ -258,10 +260,9 @@ public class Client extends Application{
 
 
 
-//    //maybe move to LoadSave class*******************************
-    public void sendLine(Object asker){    //TODO pass .wav file as param to send audio from diff files
+    public void sendLine(String wavToSend){
 
-        File audioFile = new File("RecentAudio.wav");
+        File audioFile = recording.getAudioFile(wavToSend);
 
 
         try {
@@ -272,14 +273,11 @@ public class Client extends Application{
             while((count = fin.read(buffer)) != -1){
                 os.write(buffer, 0, count);
             }
-            ((ChatSceneController)asker).notifyClient("Send Successful");
         }
         catch(FileNotFoundException fnfe){
-            ((ChatSceneController)asker).notifyClient("Audio File not found");
             MyLogger.log(Level.SEVERE, fnfe.getMessage(), fnfe);
         }
         catch(IOException ioe){
-            ((ChatSceneController)asker).notifyClient("Could not successfully send audio");
             MyLogger.log(Level.SEVERE, ioe.getMessage(), ioe);
         }
 
@@ -287,37 +285,10 @@ public class Client extends Application{
 
 
     //maybe move to LoadSave class**********************************************
-    public void voiceLine(Object asker) {
-        if(recording.state()){
-            recording.startRec(asker);
-        }
-        else{
-            ((ChatSceneController)asker).notifyClient("Not in good state to record audio");
-        }
+    public void voiceLine(String title) {
+
+        recording.startRec(title);
+
     }
-
-
-    //maybe move to LoadSave class
-//    private void saveConv(){
-//        String fileName = JOptionPane.showInputDialog("Enter file name");
-//        if(fileName != null && !fileName.equals("")) {
-//            try {
-//                File file1 = new File("SavedConversations\\");                                       //made it save to central folder
-//                file1.mkdirs();
-//                File file2 = new File(file1, fileName + ".txt");
-//                if (!file2.exists()) {
-//                    file2.createNewFile();
-//                }
-//                BufferedWriter temp = new BufferedWriter(new FileWriter(file2, false));
-//                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-//                String convo = getConvo();                                                                            //get text from message area
-//                temp.write("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n" +
-//                        convo + "\n\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<" + (dateFormat.format(new Date())));
-//                temp.close();
-//            } catch (Exception ex) {
-//                System.out.println("Error in save conversation Event Handler");
-//            }
-//        }
-//    }
 
 }
