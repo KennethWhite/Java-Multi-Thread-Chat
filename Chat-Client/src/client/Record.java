@@ -24,19 +24,22 @@ public class Record {
     private Info info;
     private boolean isGoodState;
     private AudioInputStream audioInStream;
+    private long recTime;
 
     public Record() {
+
+        wavFile = new File("ChatWavFiles");
         type = AudioFileFormat.Type.WAVE;
-        wavFile = new File("RecentAudio.wav");
         format = new AudioFormat(8000.0f, 16, 1, true, true);
+        recTime = 5000;
         try {
             if (!wavFile.exists()) {
-                wavFile.createNewFile();
+                wavFile.mkdir();
             }
             isGoodState = true;
         }
-        catch(IOException ioe){
-            MyLogger.log(Level.SEVERE, ioe.getMessage(), ioe);
+        catch(SecurityException se){
+            MyLogger.log(Level.SEVERE, se.getMessage(), se);
             isGoodState = false;
             return;
         }
@@ -47,20 +50,26 @@ public class Record {
         return this.isGoodState;
     }
 
-    public void startRec(Object asker){ //TODO make button stop rec or time
+    public void setTime(long time){
+        this.recTime = time;
+    }
+
+    public void startRec(String title){ //TODO make button stop rec or time
+
+        File newWavFile = new File(wavFile.getName() + "\\" + title);
+
         try {
 
             Thread stopper = new Thread(new Runnable() {
                 public void run() {
                     try {
-                        Thread.sleep(5000);//change time if needed
-                        stopRec(asker);
+                        Thread.sleep(recTime);//change time if needed
+                        stopRec();
                     } catch (InterruptedException ie) {
                         Thread.currentThread().interrupt();
                         MyLogger.log(Level.SEVERE, ie.getMessage(), ie);
-                        ((ChatSceneController)asker).notifyClient("Connection Interrupted, may not have gotten all audio ");
                         isGoodState = false;
-                        stopRec(asker);
+                        stopRec();
                     }
                 }
             });
@@ -69,26 +78,27 @@ public class Record {
             mic.open(format);
             mic.start();
 
-            stopper.start();//TODO test if these lines should be flipped
+            stopper.start();
             audioInStream = new AudioInputStream(mic);
 
-            AudioSystem.write(audioInStream, type, wavFile);    //make output streams to everyone for live audio??
-            ((ChatSceneController)asker).notifyClient("Recording Successful");
+            /*
+            Cleanup.cleanAudioFiles(10);
+             */
+
+            AudioSystem.write(audioInStream, type, newWavFile);    //make output streams to everyone for live audio??
         }
         catch(LineUnavailableException lue){
             format = new AudioFormat(8000.0f, 16, 1, true, true);
             MyLogger.log(Level.SEVERE, lue.getMessage(), lue);
-            ((ChatSceneController)asker).notifyClient("Unable to record");
             isGoodState = false;
         }
         catch(IOException ioe){
             MyLogger.log(Level.SEVERE, ioe.getMessage(), ioe);
-            ((ChatSceneController)asker).notifyClient("The audio was not saved correctly/lost");
             isGoodState = false;
         }
     }
 
-    public void stopRec(Object asker){
+    public void stopRec(){
         mic.stop();
         mic.flush();
         mic.close();
@@ -99,5 +109,20 @@ public class Record {
             MyLogger.log(Level.SEVERE, ioe.getMessage(), ioe);
             //TODO dont know if this matters
         }
+    }
+
+    public File getAudioFile(String fileName){
+
+        if(fileName == null){
+            //TODO if string is null
+        }
+
+        File temp = new File(wavFile.getName() + "\\" + fileName);
+
+        if(!temp.exists()){
+            //TODO if file does not exist anymore
+        }
+
+        return temp;
     }
 }

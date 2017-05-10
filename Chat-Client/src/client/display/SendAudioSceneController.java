@@ -49,11 +49,15 @@ public class SendAudioSceneController implements Initializable{
      * records audio
      */
     public void recordBtnHandler() {
-        Text nt = new Text("Cannot record yet!\n");
+        Text nt = new Text("Recorded like old program!\n");
         nt.setFill(Color.LIME);
         nt.setFont(Font.font("Monaco", 15));
         messageArea.getChildren().add(nt);
-        //client.voiceLine(this);
+
+        //TODO popup window to aquire 'title' of recorded audio clip
+        String title = "Testing...123";
+
+        client.voiceLine(title);
     }
 
     /**
@@ -71,11 +75,14 @@ public class SendAudioSceneController implements Initializable{
      * sends the audio to server
      */
     public void sendBtnHandler() {
-        Text nt = new Text("Cannot send yet!\n");
+        Text nt = new Text("Sends like old program!\n");
         nt.setFill(Color.RED);
         nt.setFont(Font.font("Verdana", 25));
         messageArea.getChildren().add(nt);
-        //client.sendLine(this);
+
+        //TODO get file from the *fileSearcher* and put into sendLine()
+
+        client.sendLine("Testing...123");
     }
 
 }

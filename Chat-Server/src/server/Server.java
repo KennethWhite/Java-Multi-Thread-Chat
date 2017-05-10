@@ -148,7 +148,10 @@ public class Server {
                  */
                 Thread audioT = new Thread(new Runnable(){
                     public void run(){
-                        while (true) {
+
+                        boolean looper = true;
+
+                        while (looper) {
 
                             try {
                                 //??make the declaration outside the loop??
@@ -161,9 +164,12 @@ public class Server {
                                 }
                             } catch (Exception e) {
                                 //LOGGER.log(Level.SEVERE, e.getMessage(), e);TODO
+                                //TODO close stuff
+                                looper = false;
                             }
                             finally {
                                 //finalmethod TODO
+                                //TODO close stuff
                             }
 
                         }
