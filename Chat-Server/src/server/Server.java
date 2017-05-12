@@ -133,7 +133,7 @@ public class Server {
                 for(ObjectOutputStream writer : objectWriters){
                     writer.writeObject("MESSAGE SERVER: Added " + name + " to chat.");
                 }
-                
+
                 objectOut.writeObject("NAMEACCEPTED");
                 objectOut.writeObject("MESSAGE Type /help for a list of server commands");
                 objectWriters.add(objectOut);                                               //adds printwriter to ArrayList
